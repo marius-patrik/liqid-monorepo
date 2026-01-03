@@ -1,5 +1,5 @@
 import { IconTrash } from "@tabler/icons-react";
-import { Window } from "../Window";
+import { Window } from "../../@plcl-ui/src/components/Window";
 
 interface TrashProps {
   isOpen: boolean;

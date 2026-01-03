@@ -1,15 +1,56 @@
 import type { FC, InputHTMLAttributes, ReactNode } from 'react';
 import { type StylingProps, getStylingClasses } from '../styles';
 
+/**
+ * Props for the Checkbox component.
+ */
 export interface CheckboxProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
 		StylingProps {
+	/** Label displayed next to the checkbox */
 	label?: ReactNode;
+	/** Description text below the label */
 	description?: ReactNode;
+	/** Error message to display */
 	error?: ReactNode;
+	/** Whether the checkbox is in an indeterminate state */
 	indeterminate?: boolean;
 }
 
+/**
+ * Checkbox - A styled checkbox input with optional label and description.
+ *
+ * Supports indeterminate state for "select all" scenarios, labels, descriptions,
+ * and error states. Uses native checkbox semantics.
+ *
+ * @example Basic checkbox
+ * ```tsx
+ * <Checkbox
+ *   checked={isChecked}
+ *   onChange={e => setIsChecked(e.target.checked)}
+ * />
+ * ```
+ *
+ * @example With label and description
+ * ```tsx
+ * <Checkbox
+ *   label="Accept terms"
+ *   description="I agree to the terms and conditions"
+ *   checked={accepted}
+ *   onChange={e => setAccepted(e.target.checked)}
+ * />
+ * ```
+ *
+ * @example Indeterminate state
+ * ```tsx
+ * <Checkbox
+ *   label="Select all"
+ *   indeterminate={someSelected && !allSelected}
+ *   checked={allSelected}
+ *   onChange={handleSelectAll}
+ * />
+ * ```
+ */
 const Checkbox: FC<CheckboxProps> = ({
 	label,
 	description,

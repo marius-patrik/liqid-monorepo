@@ -4,13 +4,53 @@ import { useContext } from 'react';
 import { ThemeContext } from '../hooks/useTheme';
 import Button from './Button';
 
+/**
+ * Header layout variants.
+ * - `app` - Fixed header for mobile app layouts
+ * - `desktop` - Glass-styled header for desktop environments
+ * - `page` - Sticky header for page layouts
+ * - `sidebar` - Sticky header for sidebar layouts
+ */
 export type HeaderVariant = 'app' | 'desktop' | 'page' | 'sidebar';
 
+/**
+ * Props for the Header component.
+ */
 export interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
+	/** Layout variant to use */
 	variant?: HeaderVariant;
+	/** Whether to show the dark mode toggle button */
 	showDarkModeToggle?: boolean;
 }
 
+/**
+ * Header - A layout component for application headers with theme toggle support.
+ *
+ * Automatically integrates with ThemeProvider when available to provide a theme
+ * toggle button. Supports multiple layout variants for different use cases.
+ *
+ * @example Basic header
+ * ```tsx
+ * <Header>
+ *   <Logo />
+ *   <Navigation />
+ * </Header>
+ * ```
+ *
+ * @example Desktop header
+ * ```tsx
+ * <Header variant="desktop">
+ *   <Clock />
+ * </Header>
+ * ```
+ *
+ * @example Without theme toggle
+ * ```tsx
+ * <Header showDarkModeToggle={false}>
+ *   <Navigation />
+ * </Header>
+ * ```
+ */
 const Header: FC<PropsWithChildren<HeaderProps>> = ({
 	children,
 	className = '',
@@ -18,6 +58,7 @@ const Header: FC<PropsWithChildren<HeaderProps>> = ({
 	showDarkModeToggle = true,
 	...props
 }) => {
+	// Use theme context if available (returns undefined if not wrapped in ThemeProvider)
 	const themeContext = useContext(ThemeContext);
 	const canShowToggle = showDarkModeToggle && themeContext;
 

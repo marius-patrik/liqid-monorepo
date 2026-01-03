@@ -13,24 +13,126 @@ Product documentation. Update periodically as the product evolves.
 
 ## 🎯 Vision
 
-<!-- High-level product goals -->
+**PLC Library** is a React component library with glassmorphism styling inspired by Apple's Liquid Glass design language. It provides:
+
+1. **Core UI Components** - A comprehensive set of styled components (Button, Card, Input, etc.)
+2. **Desktop UI Layer** - Window management, desktop shells, and OS-like interfaces
+3. **Theme System** - Light/dark/system theme support with consistent styling
+
+The goal is to enable developers to build beautiful, modern UIs with minimal effort while maintaining flexibility and customization options.
 
 ---
 
 ## 👥 Target Users
 
-<!-- Who the product serves -->
+### Primary Users
+
+- **React Developers** building modern web applications
+- **UI/UX Designers** wanting glassmorphism aesthetics
+- **Desktop-like Web Apps** requiring window management
+
+### Use Cases
+
+1. **Component Library Consumers** - Import individual components for custom UIs
+2. **Desktop Shell Applications** - Build Finder/Explorer-like interfaces
+3. **Internal Tools & Dashboards** - Create beautiful admin interfaces
 
 ---
 
 ## ✨ Key Features
 
-<!-- Major product capabilities -->
+### @plcl-core (Core Components)
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Button | ✅ Shipped | Multiple variants (glass, outline, icon, text) |
+| Card | ✅ Shipped | Glass card with header/footer slots |
+| Input/Textarea | ✅ Shipped | Form inputs with styling props |
+| Select/Checkbox/Switch | ✅ Shipped | Form controls |
+| Accordion | ✅ Shipped | Collapsible content sections |
+| Modal/Drawer/Popover | ✅ Shipped | Overlay components |
+| Header/Footer/Sidebar | ✅ Shipped | Layout components |
+| NavigationMenu | ✅ Shipped | Navigation with variants |
+| Theme System | ✅ Shipped | Light/dark/system with ThemeProvider |
+| Styling Props | ✅ Shipped | Margin, padding, radius, shadow utilities |
+
+### @plcl-ui (Desktop UI)
+
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Shell (desktop) | ✅ Shipped | Full desktop environment with windows |
+| Shell (app) | ✅ Shipped | Standard app layout |
+| Shell (page) | ✅ Shipped | Simple page layout |
+| Shell (sidebar) | ✅ Shipped | Sidebar navigation layout |
+| Shell (web) | ✅ Shipped | Iframe wrapper for URLs |
+| Shell (window) | ✅ Shipped | Individual window component |
+| Window Management | ✅ Shipped | Draggable, resizable, z-index management |
+| Desktop Icons | ✅ Shipped | Draggable app icons on desktop |
+| Settings App | ✅ Shipped | Theme, wallpaper, icons, dock settings |
+| Search | ✅ Shipped | App search overlay |
+| Custom Apps | ✅ Shipped | Add custom apps via `customApps` prop |
+| Wallpaper | ✅ Shipped | Color or image backgrounds |
+
+---
+
+## 🔧 Custom Apps API
+
+Users can add custom apps to the desktop:
+
+```typescript
+import type { AppDefinition, AppWindowProps } from "@plcl/ui-types";
+
+const MyApp = ({ isOpen, handleClose, zIndex, onFocus, resetKey }: AppWindowProps) => (
+  <Window title="My App" isOpen={isOpen} handleClose={handleClose} 
+          zIndex={zIndex} onFocus={onFocus} resetKey={resetKey}>
+    <div>App content</div>
+  </Window>
+);
+
+const customApps: AppDefinition[] = [
+  {
+    id: "my-app",
+    title: "My App",
+    icon: <IconApp size={32} />,
+    Component: MyApp,
+  },
+];
+
+<Shell variant="desktop" customApps={customApps} />
+```
 
 ---
 
 ## 🗺️ Roadmap
 
-<!-- Planned features and timeline -->
+### Phase 1: Core Foundation ✅ Complete
+
+- [x] Core component library (45+ components)
+- [x] Type definitions packages
+- [x] Desktop UI layer with Shell component
+- [x] Theme system (ThemeProvider, useTheme)
+- [x] Build system (Rslib)
+- [x] Custom apps support
+
+### Phase 2: Documentation 🟢 In Progress
+
+- [ ] Component documentation website
+- [ ] Interactive examples
+- [ ] API reference
+- [ ] Usage guides
+
+### Phase 3: Polish 🟡 Planned
+
+- [ ] Accessibility improvements (ARIA, keyboard navigation)
+- [ ] Animation system
+- [ ] Additional component variants
+- [ ] Performance optimizations
+
+### Phase 4: Release 🟡 Planned
+
+- [ ] npm package publishing
+- [ ] Versioning strategy
+- [ ] Changelog
+- [ ] Migration guides
 
 ---

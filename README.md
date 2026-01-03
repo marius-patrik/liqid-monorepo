@@ -2,7 +2,7 @@
 
 <div align="center">
 
-**PLC Library - Bundle package containing PLC component library**
+**PLC Library - React component library with glassmorphism styling**
 
 [![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
@@ -18,51 +18,110 @@
 
 ### 📦 Package Contents
 
-- **plc-core/** - Core React component library with glassmorphism styling (published to npm)
-- **plc-core-types/** - Type definitions package for plc-core
-- **plc-ui/** - Desktop UI library for window management and shells
-- **plc-ui-types/** - Type definitions package for plc-ui
-- **plc-docs/** - Documentation website showcasing all components with interactive examples
-- **plc-playground/** - Component playground for testing and development
+- **@plcl-core/** - Core React component library with 45+ components
+- **@plcl-core-types/** - Type definitions for core components
+- **@plcl-ui/** - Desktop UI library with Shell component
+- **@plcl-ui-types/** - Type definitions for desktop UI
+- **docs/** - Documentation website
+- **playground/** - Component playground for testing
 
 ---
 
 ## 🚀 Installation
 
 ```bash
-npm install plc-core plc-ui
+npm install @plcl/core @plcl/ui
 ```
 
 ---
 
 ## 📖 Usage
 
-### Basic Import
+### Core Components Only
 
 ```tsx
-import { Button, Card, Shell } from 'plc-core';
-import { Desktop, Window, WindowManager } from 'plc-ui';
-import 'plc-core/styles.css';
+import { Button, Card, Input, ThemeProvider } from '@plcl/core';
+import '@plcl/core/styles.css';
+
+function App() {
+  return (
+    <ThemeProvider>
+      <Card>
+        <Input placeholder="Enter text..." />
+        <Button>Submit</Button>
+      </Card>
+    </ThemeProvider>
+  );
+}
 ```
 
-### Component Library Only
+### Desktop Environment
 
 ```tsx
-import { Button, Card, Input } from 'plc-core';
+import { Shell } from '@plcl/ui';
+import '@plcl/core/styles.css';
+
+function App() {
+  return <Shell variant="desktop" />;
+}
 ```
 
-### Desktop UI Components
+### Shell Variants
 
 ```tsx
-import { Desktop, Window } from 'plc-ui';
+// Desktop environment with windows, dock, wallpaper
+<Shell variant="desktop" customApps={myApps} />
+
+// Standard app layout
+<Shell variant="app" header={<Logo />} footer={<Copyright />}>
+  <MainContent />
+</Shell>
+
+// Page layout
+<Shell variant="page" headerContent={<NavBar />}>
+  <PageContent />
+</Shell>
+
+// Sidebar layout
+<Shell variant="sidebar" sidebar={<Navigation />}>
+  <Content />
+</Shell>
+
+// Iframe wrapper
+<Shell variant="web" url="https://example.com" />
+
+// Individual window
+<Shell 
+  variant="window" 
+  windowTitle="My Window"
+  windowHandleClose={() => {}}
+  windowIsOpen={true}
+>
+  <WindowContent />
+</Shell>
 ```
 
-### Styles
-
-Don't forget to import the CSS:
+### Custom Desktop Apps
 
 ```tsx
-import 'plc-core/styles.css';
+import { Shell } from '@plcl/ui';
+import type { AppDefinition } from '@plcl/ui-types';
+import { IconCalculator } from '@tabler/icons-react';
+
+const CalculatorApp = ({ isOpen, handleClose, zIndex, onFocus }) => (
+  // Your app component using Window
+);
+
+const customApps: AppDefinition[] = [
+  {
+    id: 'calculator',
+    title: 'Calculator',
+    icon: <IconCalculator size={32} />,
+    Component: CalculatorApp,
+  },
+];
+
+<Shell variant="desktop" customApps={customApps} />
 ```
 
 ---
@@ -70,15 +129,14 @@ import 'plc-core/styles.css';
 ## 🏗️ Project Structure
 
 ```
-plc/
-├── plc-core/           # Core component library
-├── plc-core-types/     # Type definitions for plc-core
-├── plc-ui/             # Desktop UI library
-├── plc-ui-types/       # Type definitions for plc-ui
-├── plc-docs/           # Documentation website
-├── plc-playground/     # Component playground
-├── agent/              # Agent rules and configuration
-└── README.md           # This file
+plcl/
+├── @plcl-core/          # Core component library (45+ components)
+├── @plcl-core-types/    # Type definitions for core
+├── @plcl-ui/            # Desktop UI library (Shell component)
+├── @plcl-ui-types/      # Type definitions for UI
+├── docs/                # Documentation website
+├── playground/          # Component playground
+└── README.md
 ```
 
 ---
@@ -89,132 +147,77 @@ plc/
 
 - **Node.js** >= 18.0.0
 - **npm** >= 9.0.0
-- **Git** (for submodule support)
 
 ### Getting Started
 
 ```bash
-# Clone the repository with submodules
-git clone --recursive https://github.com/marius-patrik/plc.git
-cd plc
+# Clone the repository
+git clone https://github.com/marius-patrik/plcl.git
+cd plcl
 
-# Or if already cloned, initialize submodules
-git submodule update --init --recursive
+# Install dependencies
+npm install
 
-# Install dependencies for each package
-cd plc-core-types && npm install && cd ..
-cd plc-core && npm install && cd ..
-cd plc-ui-types && npm install && cd ..
-cd plc-ui && npm install && cd ..
-cd plc-docs && npm install && cd ..
-cd plc-playground && npm install && cd ..
+# Build all packages
+npm run build
 
-# Or use the convenience script from the root
-npm run install:all
+# Start development mode
+npm run dev
 ```
 
-### Working with Git Submodules
-
-The packages are maintained as git submodules:
+### Build Order
 
 ```bash
-# Initialize submodules after cloning
-git submodule update --init --recursive
+# Types first
+npm run build:types    # @plcl-core-types
 
-# Update submodules to latest commits
-git submodule update --remote
+# Then libraries
+npm run build:lib      # @plcl-core
 
-# Update a specific submodule
-git submodule update --remote plc-core
-git submodule update --remote plc-core-types
+# UI types and library
+cd @plcl-ui-types && npm run build
+cd @plcl-ui && npm run build
 ```
-
-## 📝 Available Scripts
-
-This is a monorepo containing multiple packages. Each package has its own scripts:
-
-### Root Scripts
-
-From the root directory, you can run commands for all packages:
-
-- `npm run dev` - Start development servers for all packages
-- `npm run build` - Build all packages
-- `npm run format` - Format code in all packages
-- `npm run lint` - Lint all packages
-- `npm run install:all` - Install dependencies for all packages
-
-### plc-core-types
-
-- `npm run build` - Build type declarations
-- `npm run dev` - Watch mode for development
-- `npm run format` - Format code with Biome
-- `npm run lint` - Lint and fix code with Biome
-- `npm run lint:check` - Check linting without fixing
-
-### plc-core
-
-- `npm run build` - Build the component library
-- `npm run dev` - Watch mode for development
-- `npm run format` - Format code with Biome
-- `npm run lint` - Lint and fix code with Biome
-- `npm run lint:check` - Check linting without fixing
-
-### plc-ui-types
-
-- `npm run build` - Build type declarations
-- `npm run dev` - Watch mode for development
-- `npm run format` - Format code with Biome
-- `npm run lint` - Lint and fix code with Biome
-
-### plc-ui
-
-- `npm run build` - Build the desktop UI library
-- `npm run dev` - Watch mode for development
-- `npm run format` - Format code with Biome
-- `npm run lint` - Lint and fix code with Biome
-- `npm run lint:check` - Check linting without fixing
-
-### plc-docs
-
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run format` - Format code with Biome
-- `npm run lint` - Lint and fix code with Biome
-- `npm run lint:check` - Check linting without fixing
-
-### plc-playground
-
-- `npm run dev` - Start development server with hot reload
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build
-- `npm run format` - Format code with Biome
-- `npm run lint` - Lint and fix code with Biome
-- `npm run lint:check` - Check linting without fixing
 
 ---
 
-## 🔗 Related Packages
+## 📝 Available Scripts
 
-- **[plc-core](./plc-core/)** - Core component library with glassmorphism styling
-- **[plc-core-types](./plc-core-types/)** - TypeScript type definitions for plc-core
-- **[plc-ui](./plc-ui/)** - Desktop UI library for window management
-- **[plc-ui-types](./plc-ui-types/)** - TypeScript type definitions for plc-ui
-- **[plc-docs](./plc-docs/)** - Documentation website with interactive component examples
-- **[plc-playground](./plc-playground/)** - Component playground for testing
+### Root Scripts
 
-## 🏗️ Architecture
+- `npm run dev` - Start development servers
+- `npm run build` - Build all packages
+- `npm run lint` - Lint all packages
+- `npm run format` - Format code
 
-This monorepo follows a clear structure:
+### Package Scripts
 
-- **plc-core/** - The core library package that gets published to npm. Contains all React components, hooks, types, and styles.
-- **plc-core-types/** - Standalone TypeScript types package. Contains shared type definitions (styling, components, layout, navigation types).
-- **plc-ui/** - Desktop UI library for window management and desktop shells. Depends on plc-core.
-- **plc-ui-types/** - TypeScript types package for plc-ui. Contains desktop and window type definitions.
-- **plc-docs/** - Documentation site that imports and showcases PLC components.
-- **plc-playground/** - Development playground for testing components.
+Each package has:
+- `npm run build` - Build the package
+- `npm run dev` - Watch mode
+- `npm run lint` - Lint code
+- `npm run format` - Format code
 
-All packages in this monorepo must use the PLC library components exclusively - no vanilla HTML/React components should be used.
+---
+
+## 🔗 Package Exports
+
+### @plcl/core
+
+- **Components**: Button, Card, Input, Select, Checkbox, Switch, Modal, Drawer, etc.
+- **Layout**: Header, Footer, Sidebar, Main, Container, Grid, Flex, Stack
+- **Theme**: ThemeProvider, useTheme, ThemeContext
+
+### @plcl/ui
+
+- **Shell** - Main component with variants: desktop, app, page, sidebar, web, window
+- **IFrameApp** - Utility for embedding web apps
+
+### @plcl/ui-types
+
+- **AppDefinition** - Interface for custom apps
+- **AppWindowProps** - Props for app window components
+- **WindowProps** - Window component props
 
 ---
 

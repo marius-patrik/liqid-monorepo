@@ -1,34 +1,50 @@
 # 📈 Progress
 
-Track development progress and milestones. Update after completing significant work.
+Track all development tasks for this project. **MANDATORY**: All work must be tracked here unless using `:now` command.
 
 ## Status Icons
 
+- ⬜ Not started
+- 🔄 In progress
 - ✅ Completed
-- 🔄 In Progress
-- ⏸️ Paused
+- ❌ Cancelled
 - 🔴 Blocked
-- ⚪ Not Started
 
 ---
 
 ## 📍 Current Status
 
-<!-- Overview of where the project stands -->
+<!-- Brief overview of where the project stands -->
 
 ---
 
-## 📜 Progress Log
+## 🔄 Active Tasks
 
-<!-- Chronological log, newest first -->
+<!-- Tasks currently being worked on -->
+
+- 🔄 Task description
+
+---
+
+## ⬜ Pending Tasks
+
+<!-- Tasks to be done next, in priority order -->
+
+- ⬜ Task description
+
+---
+
+## ✅ Completed Tasks
+
+<!-- Recently finished work, newest first -->
 
 ### YYYY-MM-DD
-- 
+- ✅ Task description
 
 ---
 
-## 🎯 Next Steps
+## 📝 Notes
 
-<!-- Upcoming work and priorities -->
+<!-- Blockers, decisions, context, or anything relevant -->
 
 ---

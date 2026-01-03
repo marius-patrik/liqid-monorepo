@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { type StylingProps, getStylingClasses } from '../styles';
 
 export interface PopoverProps extends StylingProps {
+	id?: string;
 	target: ReactNode;
 	dropdown?: ReactNode; // Make optional to allow empty
 	children?: ReactNode; // Can be used for content if dropdown not specified, or if we change API

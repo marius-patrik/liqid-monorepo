@@ -19,7 +19,8 @@
 
 ### 3. Track Work
 
-- **MANDATORY**: Track all work via `TODO.md` (except `:now` command)
+- **MANDATORY**: Track all work in `.agent/LIVE/PROGRESS` or project-specific `PROGRESS` files (except `:now` command)
+- **MANDATORY**: Track overall roadmap in `.agent/LIVE/ROADMAP`
 - Mark tasks complete **ONLY** after all quality checks pass
 - Status: ⬜ → 🔄 → ✅
 
@@ -40,12 +41,12 @@
 
 ### 6. Maintain Workspace Files
 
-- **MANDATORY**: Store project instructions in `agent/LIVE/PROJECT_GUIDELINES`
-- **MANDATORY**: Track progress in `agent/LIVE/PROGRESS`
-- **MANDATORY**: Update `agent/LIVE/PRODUCT` periodically
+- **MANDATORY**: Store project instructions in `.agent/LIVE/PROJECT_GUIDELINES`
+- **MANDATORY**: Track progress in `.agent/LIVE/PROGRESS`
+- **MANDATORY**: Update `.agent/LIVE/PRODUCT` periodically
 - **MANDATORY**: Create `FEATURE_PRD_<name>` before significant features
-- Initialize from `agent/EXAMPLE/` templates if files don't exist
-- Files in `agent/LIVE/` are ignored during session initialization
+- Initialize from `.agent/EXAMPLE/` templates if files don't exist
+- Files in `.agent/LIVE/` are ignored during session initialization
 
 ---
 
@@ -54,13 +55,15 @@
 ### 7. Analyze Files at Session Start
 
 - **MANDATORY**: Read and analyze all files at the start of every conversation
-- **EXCEPTION**: `agent/LIVE/` files are ignored during initial analysis
-- Reference `agent/LIVE/` files during active work
+- **EXCEPTION**: `.agent/LIVE/` files are ignored during initial analysis
+- Reference `.agent/LIVE/` files during active work
 
 ### 8. Review Documentation First
 
-- Review `README.md` and `TODO.md` before starting work
-- Review `agent/LIVE/PROJECT_GUIDELINES` for project-specific rules
+- Review `README.md` before starting work
+- Review `.agent/LIVE/ROADMAP` for overall progress
+- Review `.agent/LIVE/PROGRESS` or project-specific `PROGRESS` files for task status
+- Review `.agent/LIVE/PROJECT_GUIDELINES` for project-specific rules
 
 ---
 
@@ -93,7 +96,7 @@
 3. Run build - fix ALL errors
 4. Test functionality
 5. Update todos and documentation
-6. Update `agent/LIVE/PROGRESS`
+6. Update `.agent/LIVE/PROGRESS`
 
 ---
 

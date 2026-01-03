@@ -1,14 +1,49 @@
 import type { FC, HTMLAttributes, PropsWithChildren, ReactNode } from 'react';
 import { type StylingProps, getStylingClasses } from '../styles';
 
-// Mapping legacy IconSize to new naming if needed, or just supporting the new Size type
+/**
+ * Props for the AppIcon component.
+ */
 export type AppIconProps = HTMLAttributes<HTMLButtonElement> &
 	StylingProps & {
+		/** Name/label displayed below the icon */
 		name?: string;
+		/** Icon element to display */
 		icon: ReactNode;
+		/** Whether to show the name below the icon */
 		showTitle?: boolean;
 	};
 
+/**
+ * AppIcon - A clickable app icon with glassmorphism styling.
+ *
+ * Used for desktop icons and dock items in the desktop environment.
+ * Displays an icon with optional name label and hover scale effect.
+ *
+ * @example Basic app icon
+ * ```tsx
+ * <AppIcon
+ *   name="Settings"
+ *   icon={<IconSettings size={32} />}
+ *   onClick={() => openSettings()}
+ * />
+ * ```
+ *
+ * @example Icon without title
+ * ```tsx
+ * <AppIcon
+ *   icon={<IconSearch size={24} />}
+ *   showTitle={false}
+ *   onClick={openSearch}
+ * />
+ * ```
+ *
+ * @example Different sizes
+ * ```tsx
+ * <AppIcon name="Small" icon={<Icon />} size="sm" />
+ * <AppIcon name="Large" icon={<Icon />} size="lg" />
+ * ```
+ */
 const AppIcon: FC<PropsWithChildren<AppIconProps>> = ({
 	name,
 	icon,

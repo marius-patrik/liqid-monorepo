@@ -1,6 +1,5 @@
+import type { AppDefinition } from "@plcl/ui-types";
 import { type JSX, useCallback, useEffect, useState } from "react";
-import type { AppDefinition } from "../../../@plcl-ui-types/dist";
-import { DesktopHeader } from "./DesktopHeader";
 
 interface WindowManagerProps {
   apps: AppDefinition[];
@@ -64,9 +63,8 @@ export const WindowManager = ({
   return (
     <div
       id="window-manager"
-      className="w-full h-full system-overlay pointer-events-none">
-      <DesktopHeader />
-
+      className="w-full h-full system-overlay pointer-events-none"
+    >
       {apps.map((app) => {
         const isOpen = openStates[app.id] || false;
         const AppComp = app.Component;

@@ -1,58 +1,102 @@
 import {
-  IconArrowsMaximize,
-  IconArrowsMinimize,
-  IconMaximize,
-  IconMinimize,
-  IconSearch,
-  IconSettings,
-  IconX,
-} from "@tabler/icons-react";
-import type { AppDefinition } from "../../../@plcl-core-types/dist";
+  AppIcon,
+  Footer,
+  Header,
+  Main,
+  NavigationMenu,
+  Sidebar,
+  ThemeProvider,
+} from "@plcl/core";
+import type { AppDefinition } from "@plcl/ui-types";
+import { IconSearch, IconSettings } from "@tabler/icons-react";
 import type { FC, PropsWithChildren, ReactNode } from "react";
-import {
-  Children,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
 import * as React from "react";
+import { Children, useCallback, useEffect, useMemo, useState } from "react";
 import { DesktopLayoutProvider } from "../hooks/useDesktopLayout";
 import { FooterProvider, useFooter } from "../hooks/useFooter";
 import { IconSizeProvider, useIconSize } from "../hooks/useIconSize";
-import { ThemeProvider } from "../hooks/useTheme";
 import { WallpaperProvider } from "../hooks/useWallpaper";
-import AppIcon from "./AppIcon";
-import { DesktopIcons } from "./Desktop/Apps";
-import { Clock } from "./Desktop/Clock";
-import { Desktop } from "./Desktop/Desktop";
-import { Search } from "./Desktop/Search";
-import { Settings } from "./Desktop/Settings";
-import { Wallpaper } from "./Desktop/Wallpaper";
-import { WindowManager } from "./Desktop/WindowManager";
-import Footer from "./Footer";
-import type { FooterVariant } from "./Footer";
-import Header from "./Header";
-import type { HeaderVariant } from "./Header";
-import Main from "./Main";
-import type { MainVariant } from "./Main";
-import NavigationMenu from "./NavigationMenu";
-import type { NavigationMenuItem } from "./NavigationMenu";
-import Sidebar from "./Sidebar";
+import { DesktopIcons } from "./Apps";
+import { Search } from "./Search";
+import { Settings } from "./Settings";
 
-// Shell.Item subcomponent for defining pages
-export interface ShellItemProps extends PropsWithChildren {
+// Inline Clock component for desktop header
+const Clock = () => {
+  const [time, setTime] = useState(new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime(new Date());
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const formattedTime = time.toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+
+  return <div className="ml-auto font-semibold">{formattedTime}</div>;
+};
+
+import { Desktop } from "./Desktop";
+import { Wallpaper } from "./Wallpaper";
+import { Window } from "./Window";
+import { WindowManager } from "./WindowManager";
+
+// Types for Header/Footer/Main variants
+type HeaderVariant = "app" | "desktop" | "page" | "sidebar";
+type FooterVariant = "app" | "desktop" | "page" | "sidebar";
+type MainVariant = "app" | "desktop" | "page" | "sidebar";
+
+// Navigation menu item type
+interface NavigationMenuItem {
   id: string;
-  title: string;
+  label: string;
   icon?: ReactNode;
 }
 
+/**
+ * Props for Shell.Item subcomponent used to define pages in navigation.
+ */
+export interface ShellItemProps extends PropsWithChildren {
+  /** Unique identifier for the page */
+  id: string;
+  /** Display title shown in navigation */
+  title: string;
+  /** Optional icon displayed alongside the title */
+  icon?: ReactNode;
+}
+
+/**
+ * Shell.Item - Defines a page within the Shell component.
+ * Used as children of Shell to create navigable pages.
+ *
+ * @example
+ * ```tsx
+ * <Shell variant="page">
+ *   <Shell.Item id="home" title="Home">
+ *     <HomePage />
+ *   </Shell.Item>
+ *   <Shell.Item id="settings" title="Settings">
+ *     <SettingsPage />
+ *   </Shell.Item>
+ * </Shell>
+ * ```
+ */
 const ShellItem: FC<ShellItemProps> = ({ children }) => {
-  // This component is just a marker - the actual rendering is handled by Shell
   return <>{children}</>;
 };
 
+/**
+ * Available Shell layout variants.
+ * - `desktop` - Full desktop environment with windows, dock, and wallpaper
+ * - `app` - Standard application layout with header, main content, and footer
+ * - `page` - Simple page layout for content-focused views
+ * - `sidebar` - Layout with sidebar navigation
+ * - `web` - Iframe wrapper for embedding external URLs
+ * - `window` - Individual draggable/resizable window
+ */
 export type ShellVariant =
   | "app"
   | "desktop"
@@ -61,86 +105,137 @@ export type ShellVariant =
   | "web"
   | "window";
 
+/**
+ * Props for the Shell component.
+ */
 export interface ShellProps {
+  /** The layout variant to use */
   variant: ShellVariant;
 
-  // Background
+  /** Background image URL (desktop variant) */
   backgroundImage?: string;
+  /** CSS class for background overlay (desktop variant) */
   backgroundOverlay?: string;
 
-  // Desktop-specific props
+  /** Custom apps to display in the desktop environment (desktop variant) */
   customApps?: AppDefinition[];
 
-  // Web variant props
+  /** URL to embed in iframe (web variant) */
   url?: string;
+  /** Title for the iframe (web variant) */
+  webTitle?: string;
 
-  // Window variant props
+  /** Title displayed in window header (window variant) */
   windowTitle?: ReactNode;
+  /** Callback when window is closed (window variant) */
   windowHandleClose?: () => void;
+  /** Whether the window is open (window variant) */
+  windowIsOpen?: boolean;
+  /** Z-index for window stacking (window variant) */
   windowZIndex?: number;
+  /** Callback when window receives focus (window variant) */
   windowOnFocus?: () => void;
-  windowState?: {
-    position: { x: number; y: number };
-    size: { width: number; height: number };
-    isFullscreen: boolean;
-    isMaximized: boolean;
-    isDragging: boolean;
-    isResizing: boolean;
-  };
-  onWindowStateChange?: (state: {
-    position: { x: number; y: number };
-    size: { width: number; height: number };
-    isFullscreen: boolean;
-    isMaximized: boolean;
-    isDragging: boolean;
-    isResizing: boolean;
-  }) => void;
+  /** Key to reset window position/size (window variant) */
+  windowResetKey?: number;
 
-  // Component variants (auto-set based on shell variant if not provided)
+  /** Header component variant override */
   headerVariant?: HeaderVariant;
+  /** Footer component variant override */
   footerVariant?: FooterVariant;
+  /** Main content area variant override */
   mainVariant?: MainVariant;
 
-  // Content props - allows inline content
+  /** Content to render inside the header */
   headerContent?: ReactNode;
+  /** Content to render inside the footer */
   footerContent?: ReactNode;
+  /** Content to render in the main area */
   mainContent?: ReactNode;
 
-  // Component props - allows passing full components
+  /** Full header component override */
   header?: ReactNode;
+  /** Full footer component override */
   footer?: ReactNode;
+  /** Full main content component override */
   main?: ReactNode;
+  /** Sidebar component (sidebar variant) */
   sidebar?: ReactNode;
-  sidebarContent?: ReactNode; // Alias for sidebar
+  /** Alias for sidebar prop */
+  sidebarContent?: ReactNode;
 
-  // Navigation (legacy props for compatibility)
+  /** Navigation menu items (legacy) */
   menuItems?: NavigationMenuItem[];
+  /** Page content map keyed by page ID (legacy) */
   pages?: Record<string, ReactNode>;
+  /** Default active page ID (legacy) */
   defaultPageId?: string;
+  /** Callback when active page changes */
   onPageChange?: (pageId: string) => void;
 
-  // Navigation (new props)
+  /** Navigation menu items */
   navigationItems?: NavigationMenuItem[];
+  /** Default active page ID */
   defaultActivePageId?: string;
 
-  // Layout options
+  /** Whether main content area is scrollable */
   isMainScrollable?: boolean;
-  isScrollable?: boolean; // Alias for isMainScrollable
+  /** Alias for isMainScrollable */
+  isScrollable?: boolean;
+  /** Whether sidebar is scrollable (sidebar variant) */
   isSidebarScrollable?: boolean;
 }
 
+/**
+ * Shell - A versatile layout component with multiple variants for different use cases.
+ *
+ * The Shell component provides a flexible foundation for building applications with
+ * consistent layout patterns. It supports 6 variants:
+ *
+ * - **desktop**: Full desktop environment with windows, dock, wallpaper, and app management
+ * - **app**: Standard application layout with header, main content area, and footer
+ * - **page**: Simple page layout for content-focused views
+ * - **sidebar**: Layout with sidebar navigation and main content area
+ * - **web**: Iframe wrapper for embedding external URLs
+ * - **window**: Individual draggable, resizable window component
+ *
+ * @example Desktop environment with custom apps
+ * ```tsx
+ * import { Shell } from '@plcl/ui';
+ *
+ * const customApps = [
+ *   { id: 'calculator', title: 'Calculator', icon: <IconCalc />, Component: CalcApp }
+ * ];
+ *
+ * <Shell variant="desktop" customApps={customApps} />
+ * ```
+ *
+ * @example App layout with header and footer
+ * ```tsx
+ * <Shell variant="app" headerContent={<Logo />} footerContent={<Copyright />}>
+ *   <MainContent />
+ * </Shell>
+ * ```
+ *
+ * @example Sidebar navigation layout
+ * ```tsx
+ * <Shell variant="sidebar" sidebar={<NavMenu />}>
+ *   <PageContent />
+ * </Shell>
+ * ```
+ */
 const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
   variant,
   backgroundImage,
   backgroundOverlay,
   customApps = [],
   url,
+  webTitle = "Web App",
   windowTitle,
   windowHandleClose,
-  windowZIndex,
+  windowIsOpen = true,
+  windowZIndex = 1,
   windowOnFocus,
-  windowState,
-  onWindowStateChange,
+  windowResetKey,
   headerVariant,
   footerVariant,
   mainVariant,
@@ -163,15 +258,22 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
   isSidebarScrollable = true,
   children,
 }) => {
-  // Auto-set variants based on shell variant if not provided (exclude 'web' variant)
+  // Auto-set variants based on shell variant if not provided (exclude 'web' and 'window' variants)
   const finalHeaderVariant =
     headerVariant ||
-    (variant === "web" ? undefined : (variant as HeaderVariant));
+    (variant === "web" || variant === "window"
+      ? undefined
+      : (variant as HeaderVariant));
   const finalFooterVariant =
     footerVariant ||
-    (variant === "web" ? undefined : (variant as FooterVariant));
+    (variant === "web" || variant === "window"
+      ? undefined
+      : (variant as FooterVariant));
   const finalMainVariant =
-    mainVariant || (variant === "web" ? undefined : (variant as MainVariant));
+    mainVariant ||
+    (variant === "web" || variant === "window"
+      ? undefined
+      : (variant as MainVariant));
 
   // Handle scrollable prop aliases
   const finalIsMainScrollable = isMainScrollable ?? isScrollable ?? true;
@@ -182,14 +284,14 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
   // Extract Shell.Item children and build menu items and pages
   const { shellItems, shellPages, shellNavItems } = useMemo(() => {
     const items: ShellItemProps[] = [];
-    const pages: Record<string, ReactNode> = {};
+    const pagesMap: Record<string, ReactNode> = {};
     const navItems: NavigationMenuItem[] = [];
 
     Children.forEach(children, (child) => {
       if (React.isValidElement(child) && child.type === ShellItem) {
         const props = child.props as ShellItemProps;
         items.push(props);
-        pages[props.id] = props.children;
+        pagesMap[props.id] = props.children;
         navItems.push({
           id: props.id,
           label: props.title,
@@ -200,7 +302,7 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
 
     return {
       shellItems: items,
-      shellPages: pages,
+      shellPages: pagesMap,
       shellNavItems: navItems,
     };
   }, [children]);
@@ -231,7 +333,7 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
     if (newActivePageId && newActivePageId !== currentPageId) {
       setCurrentPageId(newActivePageId);
     }
-  }, [defaultActivePageId, defaultPageId]);
+  }, [defaultActivePageId, defaultPageId, navItems, shellItems, currentPageId]);
 
   React.useEffect(() => {
     if (onPageChange) {
@@ -259,7 +361,8 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
         onItemChange={(id) => {
           setCurrentPageId(id);
         }}
-        variant={navVariant}>
+        variant={navVariant}
+      >
         <div className="flex items-center gap-4 w-full">
           {headerContent || header}
           <div className="flex items-center gap-2">
@@ -305,7 +408,7 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
       <div className="fixed inset-0 w-full h-full">
         <iframe
           src={url}
-          title="Web App"
+          title={webTitle}
           className="w-full h-full border-none"
           sandbox="allow-same-origin allow-scripts allow-forms allow-popups allow-modals"
         />
@@ -313,237 +416,23 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
     );
   }
 
-  // Window variant - managed window with title bar and controls
+  // Window variant - uses the Window component
   if (variant === "window") {
-    if (
-      !windowState ||
-      !windowTitle ||
-      !windowHandleClose ||
-      windowZIndex === undefined ||
-      !windowOnFocus
-    ) {
+    if (!windowTitle || !windowHandleClose) {
       return null;
     }
 
-    const {
-      position,
-      size,
-      isFullscreen,
-      isMaximized,
-      isDragging,
-      isResizing,
-    } = windowState;
-    const dragOffset = useRef({ x: 0, y: 0 });
-    const resizeStart = useRef({ x: 0, y: 0, width: 0, height: 0 });
-
-    const handleFullscreen = () => {
-      if (onWindowStateChange) {
-        onWindowStateChange({
-          ...windowState,
-          isFullscreen: true,
-          isMaximized: false,
-        });
-      }
-    };
-
-    const cancelFullscreen = () => {
-      if (onWindowStateChange) {
-        onWindowStateChange({
-          ...windowState,
-          isFullscreen: false,
-          isMaximized: false,
-        });
-      }
-    };
-
-    const handleMaximize = () => {
-      if (onWindowStateChange) {
-        onWindowStateChange({
-          ...windowState,
-          isFullscreen: false,
-          isMaximized: true,
-        });
-      }
-    };
-
-    const cancelMaximize = () => {
-      if (onWindowStateChange) {
-        onWindowStateChange({
-          ...windowState,
-          isFullscreen: false,
-          isMaximized: false,
-        });
-      }
-    };
-
-    const handlePointerDown = useCallback(
-      (e: React.PointerEvent) => {
-        if (isFullscreen || isMaximized) return;
-        if (onWindowStateChange) {
-          onWindowStateChange({
-            ...windowState,
-            isDragging: true,
-          });
-        }
-        (e.target as HTMLElement).setPointerCapture(e.pointerId);
-        dragOffset.current = {
-          x: e.clientX - position.x,
-          y: e.clientY - position.y,
-        };
-      },
-      [position, isFullscreen, isMaximized, windowState, onWindowStateChange],
-    );
-
-    const handleResizePointerDown = useCallback(
-      (e: React.PointerEvent) => {
-        if (isFullscreen || isMaximized) return;
-        e.stopPropagation();
-        if (onWindowStateChange) {
-          onWindowStateChange({
-            ...windowState,
-            isResizing: true,
-          });
-        }
-        (e.target as HTMLElement).setPointerCapture(e.pointerId);
-        resizeStart.current = {
-          x: e.clientX,
-          y: e.clientY,
-          width: size.width,
-          height: size.height,
-        };
-      },
-      [size, isFullscreen, isMaximized, windowState, onWindowStateChange],
-    );
-
-    useEffect(() => {
-      if (!onWindowStateChange) return;
-
-      const handlePointerMove = (e: PointerEvent) => {
-        if (isDragging) {
-          onWindowStateChange({
-            ...windowState,
-            position: {
-              x: e.clientX - dragOffset.current.x,
-              y: e.clientY - dragOffset.current.y,
-            },
-          });
-        }
-        if (isResizing) {
-          const deltaX = e.clientX - resizeStart.current.x;
-          const deltaY = e.clientY - resizeStart.current.y;
-          onWindowStateChange({
-            ...windowState,
-            size: {
-              width: Math.max(200, resizeStart.current.width + deltaX),
-              height: Math.max(150, resizeStart.current.height + deltaY),
-            },
-          });
-        }
-      };
-
-      const handlePointerUp = () => {
-        onWindowStateChange({
-          ...windowState,
-          isDragging: false,
-          isResizing: false,
-        });
-      };
-
-      if (isDragging || isResizing) {
-        document.addEventListener("pointermove", handlePointerMove);
-        document.addEventListener("pointerup", handlePointerUp);
-      }
-
-      return () => {
-        document.removeEventListener("pointermove", handlePointerMove);
-        document.removeEventListener("pointerup", handlePointerUp);
-      };
-    }, [isDragging, isResizing, windowState, onWindowStateChange]);
-
-    const windowStyle =
-      isFullscreen || isMaximized
-        ? { zIndex: isFullscreen ? 9998 : windowZIndex }
-        : {
-            left: position.x,
-            top: position.y,
-            width: size.width,
-            height: size.height,
-            zIndex: windowZIndex,
-          };
-
     return (
-      // biome-ignore lint/a11y/useSemanticElements: Window needs to be a div for positioning and styling
-      <div
-        role="dialog"
-        style={windowStyle}
-        onMouseDown={windowOnFocus}
-        className={`border border-zinc-400/40 bg-zinc-600/60 backdrop-blur-xs shadow-lg absolute rounded-3xl min-w-xs p-2 flex flex-col gap-1 animate-scale-in pointer-events-auto ${isMaximized ? "left-0! top-6! w-full! h-[calc(99vh-1rem)]!" : ""} ${isFullscreen ? "left-0! top-0! w-full! h-full! rounded-none" : ""}`}>
-        <div
-          role="toolbar"
-          className="flex flex-row gap-1 cursor-move select-none touch-none"
-          onPointerDown={handlePointerDown}
-          onDoubleClick={() => {
-            if (isMaximized || isFullscreen) {
-              cancelMaximize();
-            } else {
-              handleMaximize();
-            }
-          }}>
-          <div className="border border-zinc-400/40 bg-zinc-600/60 backdrop-blur-xs shadow-lg rounded-xl rounded-tl-2xl p-3 flex flex-row w-full">
-            {windowTitle}
-          </div>
-
-          <div
-            className="border border-zinc-400/40 bg-zinc-600/60 backdrop-blur-xs shadow-lg rounded-xl rounded-tr-2xl p-3 flex flex-row ml-auto gap-2"
-            onMouseDown={(e) => e.stopPropagation()}
-            onKeyDown={(e) => e.stopPropagation()}>
-            <IconX
-              size={20}
-              className="button hover-scale"
-              onClick={windowHandleClose}
-            />
-
-            {isMaximized ? (
-              <IconMinimize
-                size={20}
-                className="button hover-scale"
-                onClick={cancelMaximize}
-              />
-            ) : (
-              <IconMaximize
-                size={20}
-                className="button hover-scale"
-                onClick={handleMaximize}
-              />
-            )}
-
-            {isFullscreen ? (
-              <IconArrowsMinimize
-                size={20}
-                className="button hover-scale"
-                onClick={cancelFullscreen}
-              />
-            ) : (
-              <IconArrowsMaximize
-                size={20}
-                className="button hover-scale"
-                onClick={handleFullscreen}
-              />
-            )}
-          </div>
-        </div>
-
-        <div className="border border-zinc-400/40 bg-zinc-600/60 backdrop-blur-xs shadow-lg rounded-xl rounded-b-2xl w-full h-full p-2 overflow-auto">
-          {finalMain}
-        </div>
-
-        {!isFullscreen && !isMaximized && (
-          <div
-            className="absolute bottom-1 right-1 w-4 h-4 cursor-se-resize touch-none"
-            onPointerDown={handleResizePointerDown}
-          />
-        )}
-      </div>
+      <Window
+        title={windowTitle}
+        handleClose={windowHandleClose}
+        isOpen={windowIsOpen}
+        zIndex={windowZIndex}
+        onFocus={windowOnFocus ?? (() => {})}
+        resetKey={windowResetKey}
+      >
+        {finalMain}
+      </Window>
     );
   }
 
@@ -581,7 +470,7 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
             id: "Search",
             title: "Search",
             icon: <IconSearch size={32} />,
-            Component: () => null, // Search is generic overlay
+            Component: () => null,
           },
           ...allApps,
         ],
@@ -639,7 +528,8 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
           {footerContent || (
             <Footer
               variant={"desktop" as FooterVariant}
-              hideByDefault={hideFooter}>
+              hideByDefault={hideFooter}
+            >
               {allAppsWithSearch.map((app) => (
                 <AppIcon
                   key={app.id}
@@ -683,7 +573,8 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
                       <div className="absolute z-50 top-0 w-full flex justify-center pointer-events-none pt-2">
                         <Header
                           variant={"desktop" as HeaderVariant}
-                          className="system-overlay-10 w-screen">
+                          className="system-overlay-10 w-screen"
+                        >
                           <Clock />
                         </Header>
                       </div>
@@ -741,7 +632,8 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
 
             <Main
               variant={finalMainVariant}
-              isScrollable={finalIsMainScrollable}>
+              isScrollable={finalIsMainScrollable}
+            >
               {finalMain}
             </Main>
 
@@ -765,7 +657,8 @@ const ShellComponent: FC<PropsWithChildren<ShellProps>> = ({
         <Main
           key={currentPageId}
           variant={finalMainVariant}
-          isScrollable={finalIsMainScrollable}>
+          isScrollable={finalIsMainScrollable}
+        >
           {finalMain}
         </Main>
 

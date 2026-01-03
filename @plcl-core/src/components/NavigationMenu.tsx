@@ -53,11 +53,11 @@ const NavigationMenu: FC<NavigationMenuProps> & {
 	);
 
 	// Sync with external defaultActiveId changes
+	// biome-ignore lint/correctness/useExhaustiveDependencies: We only want to sync when defaultActiveId changes, not when activeId changes
 	useEffect(() => {
 		if (defaultActiveId && defaultActiveId !== activeId) {
 			setActiveId(defaultActiveId);
 		}
-		// biome-ignore lint/correctness/useExhaustiveDependencies: We only want to sync when defaultActiveId changes, not when activeId changes
 	}, [defaultActiveId]);
 
 	const handleSetActiveId = (id: string) => {

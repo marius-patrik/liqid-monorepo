@@ -2,13 +2,53 @@ import type { FC, HTMLAttributes, PropsWithChildren } from 'react';
 import { useState } from 'react';
 import Box from './Box';
 
+/**
+ * Footer layout variants.
+ * - `app` - Fixed mobile dock at bottom of screen
+ * - `desktop` - Floating dock with optional auto-hide
+ * - `page` - Standard footer for page layouts
+ * - `sidebar` - Footer for sidebar layouts
+ */
 export type FooterVariant = 'app' | 'desktop' | 'page' | 'sidebar';
 
+/**
+ * Props for the Footer component.
+ */
 export interface FooterProps extends HTMLAttributes<HTMLDivElement> {
+	/** Whether to hide the footer by default (hover to reveal) */
 	hideByDefault?: boolean;
+	/** Layout variant to use */
 	variant?: FooterVariant;
 }
 
+/**
+ * Footer - A layout component for application footers and docks.
+ *
+ * Supports multiple variants including a desktop dock that can auto-hide and
+ * reveal on hover. The desktop variant provides a macOS-like dock experience.
+ *
+ * @example Desktop dock
+ * ```tsx
+ * <Footer variant="desktop">
+ *   <AppIcon name="Settings" icon={<IconSettings />} />
+ *   <AppIcon name="Files" icon={<IconFolder />} />
+ * </Footer>
+ * ```
+ *
+ * @example Auto-hiding dock
+ * ```tsx
+ * <Footer variant="desktop" hideByDefault>
+ *   <AppIcon name="Settings" icon={<IconSettings />} />
+ * </Footer>
+ * ```
+ *
+ * @example Page footer
+ * ```tsx
+ * <Footer variant="page">
+ *   <p>© 2024 My App</p>
+ * </Footer>
+ * ```
+ */
 const Footer: FC<PropsWithChildren<FooterProps>> = ({
 	hideByDefault = false,
 	variant = 'desktop',

@@ -7,13 +7,23 @@ import {
 } from "@tabler/icons-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/**
+ * Props for the Window component.
+ */
 interface WindowProps {
+  /** Title displayed in the window header */
   title: React.ReactNode;
+  /** Callback when the window close button is clicked */
   handleClose: () => void;
+  /** Content to render inside the window */
   children: React.ReactNode;
+  /** Whether the window is visible */
   isOpen: boolean;
+  /** Z-index for window stacking order */
   zIndex: number;
+  /** Callback when the window receives focus */
   onFocus: () => void;
+  /** Key to reset window position and size to defaults */
   resetKey?: number;
 }
 
@@ -42,6 +52,43 @@ const getDefaultDimensions = () => {
   };
 };
 
+/**
+ * Window - A draggable, resizable window component with glassmorphism styling.
+ *
+ * Features:
+ * - Drag to move by clicking and dragging the title bar
+ * - Resize by dragging the bottom-right corner
+ * - Maximize to fill the viewport (below header)
+ * - Fullscreen mode to cover entire screen
+ * - Double-click title bar to maximize/restore
+ * - Close, maximize, and fullscreen buttons
+ *
+ * @example Basic usage
+ * ```tsx
+ * <Window
+ *   title="My Window"
+ *   isOpen={isOpen}
+ *   handleClose={() => setIsOpen(false)}
+ *   zIndex={1}
+ *   onFocus={() => bringToFront()}
+ * >
+ *   <div>Window content here</div>
+ * </Window>
+ * ```
+ *
+ * @example With custom title
+ * ```tsx
+ * <Window
+ *   title={<span><Icon /> My App</span>}
+ *   isOpen={true}
+ *   handleClose={handleClose}
+ *   zIndex={zIndex}
+ *   onFocus={onFocus}
+ * >
+ *   <AppContent />
+ * </Window>
+ * ```
+ */
 export const Window = ({
   title,
   handleClose,

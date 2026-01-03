@@ -1,24 +1,72 @@
 import type { ChangeEvent, FC, ReactNode, SelectHTMLAttributes } from 'react';
 import { type StylingProps, getStylingClasses } from '../styles';
 
+/**
+ * Item definition for Select dropdown options.
+ */
 export interface SelectItem {
+	/** Option value */
 	value: string;
+	/** Display label */
 	label: string;
+	/** Whether the option is disabled */
 	disabled?: boolean;
 }
 
+/**
+ * Props for the Select component.
+ */
 export interface SelectProps
 	extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size'>,
 		StylingProps {
+	/** Array of options - can be strings or SelectItem objects */
 	data?: (string | SelectItem)[];
+	/** Label displayed above the select */
 	label?: ReactNode;
+	/** Description text below the select */
 	description?: ReactNode;
+	/** Error message to display */
 	error?: ReactNode;
+	/** Visual variant */
 	variant?: 'filled' | 'unstyled';
+	/** Content to render on the left side */
 	leftSection?: ReactNode;
+	/** Content to render on the right side */
 	rightSection?: ReactNode;
 }
 
+/**
+ * Select - A dropdown select component with optional label and description.
+ *
+ * Supports both simple string arrays and complex SelectItem objects for options.
+ * Features include label, description, error states, and left/right sections.
+ *
+ * @example Basic usage
+ * ```tsx
+ * <Select data={['Option 1', 'Option 2', 'Option 3']} />
+ * ```
+ *
+ * @example With label and description
+ * ```tsx
+ * <Select
+ *   label="Country"
+ *   description="Select your country"
+ *   data={[
+ *     { value: 'us', label: 'United States' },
+ *     { value: 'uk', label: 'United Kingdom' },
+ *   ]}
+ * />
+ * ```
+ *
+ * @example With error
+ * ```tsx
+ * <Select
+ *   label="Required field"
+ *   error="Please select an option"
+ *   data={['Option 1', 'Option 2']}
+ * />
+ * ```
+ */
 const Select: FC<SelectProps> = ({
 	data = [],
 	label,

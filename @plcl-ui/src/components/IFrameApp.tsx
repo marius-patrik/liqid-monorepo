@@ -1,5 +1,5 @@
+import type { AppWindowProps } from "@plcl/ui-types";
 import type { ReactNode } from "react";
-import type { AppWindowProps } from "../../../@plcl-ui-types/dist";
 import { Window } from "./Window";
 
 interface IFrameAppProps extends AppWindowProps {
@@ -36,7 +36,8 @@ export const IFrameApp = ({
       isOpen={isOpen}
       zIndex={zIndex}
       onFocus={onFocus}
-      resetKey={resetKey}>
+      resetKey={resetKey}
+    >
       <iframe
         src={url}
         title={title}

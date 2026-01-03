@@ -12,24 +12,181 @@ Project-specific instructions and standards. Update this file whenever the user 
 
 ## 💻 Code Standards
 
-<!-- Add coding conventions and style guidelines -->
+### TypeScript
+
+- ✅ Use TypeScript for all code
+- ✅ Define proper interfaces for component props (avoid `any`)
+- ✅ Export types from type packages (`@plcl-core-types`, `@plcl-ui-types`)
+- ⚠️ Use `type` for type-only imports
+- 💡 Prefer explicit return types on functions
+
+### React
+
+- ✅ Use functional components with hooks (no class components)
+- ✅ Use `FC<Props>` type for component definitions
+- ✅ Components should support `className` prop for customization
+- ⚠️ Use `PropsWithChildren` when component accepts children
+
+### Imports
+
+- ✅ Use package names for imports, not relative paths across packages
+  - ✅ `import { Button } from "@plcl/core"` 
+  - ❌ `import { Button } from "../../../@plcl-core/dist"`
+- ✅ Group imports: external packages → internal packages → relative imports
+- ⚠️ Use named exports over default exports where practical
+
+### Styling
+
+- ✅ Use Tailwind CSS for styling
+- ✅ Support glassmorphism/glass styling via `variant` prop
+- ✅ Components should support `StylingProps` for margin/padding/radius
+- 💡 Use CSS variables for theming consistency
 
 ---
 
 ## 🏗️ Architecture
 
-<!-- Add system design and structure -->
+### Package Structure
+
+```
+plcl/
+├── @plcl-core/          # Core UI component library
+│   └── src/
+│       ├── components/  # React components (45+)
+│       ├── hooks/       # Shared hooks (useTheme)
+│       ├── styles.css   # Global styles
+│       └── index.ts     # Public exports
+├── @plcl-core-types/    # Type definitions for core
+├── @plcl-ui/            # Desktop UI layer
+│   └── src/
+│       ├── components/  # Shell, Window, Settings, Search, etc.
+│       ├── hooks/       # Desktop-specific hooks
+│       └── index.ts     # Public exports (Shell, IFrameApp)
+├── @plcl-ui-types/      # Type definitions for desktop UI
+├── docs/                # Documentation website
+└── playground/          # Development playground
+```
+
+### Separation of Concerns
+
+| Package | Responsibility |
+|---------|---------------|
+| `@plcl-core` | Core UI components (Button, Card, Input, etc.) + Theme |
+| `@plcl-ui` | Desktop UI (Shell component with all variants) |
+| `*-types` | Standalone type definitions |
+
+### Key Architectural Rules
+
+- ✅ **Theme lives in `@plcl-core`** - ThemeProvider, useTheme hook
+- ✅ **Shell component lives in `@plcl-ui`** - Single component with 6 variants
+- ✅ **Desktop-specific hooks stay in `@plcl-ui`** - useDesktopLayout, useFooter, useIconSize, useWallpaper
+- ✅ **Type packages are separate** - Allows consumers to import types without the full library
+
+### Shell Component Variants
+
+| Variant | Use Case |
+|---------|----------|
+| `desktop` | Full desktop environment with windows, dock, wallpaper |
+| `app` | Standard app layout with header/main/footer |
+| `page` | Simple page layout |
+| `sidebar` | Layout with sidebar navigation |
+| `web` | Iframe wrapper for external URLs |
+| `window` | Individual draggable/resizable window |
+
+### Package Dependencies
+
+```
+@plcl-core-types → (standalone)
+@plcl-core → depends on @plcl-core-types
+@plcl-ui-types → (standalone)
+@plcl-ui → depends on @plcl-core, @plcl-ui-types
+docs → depends on @plcl-core, @plcl-ui
+playground → depends on @plcl-core, @plcl-ui
+```
 
 ---
 
 ## 🔄 Development Workflow
 
-<!-- Add how work is organized -->
+### Build Order
+
+1. `@plcl-core-types` (types first)
+2. `@plcl-core` (core library)
+3. `@plcl-ui-types` (UI types)
+4. `@plcl-ui` (desktop layer)
+5. `docs` / `playground` (applications)
+
+### Commands
+
+```bash
+# Build types first, then core library
+npm run build:types    # Builds @plcl-core-types
+npm run build:lib      # Builds @plcl-core
+
+# Development mode (all packages concurrently)
+npm run dev
+
+# Lint and format
+npm run lint
+npm run format
+```
+
+### Quality Checks
+
+- ✅ Run lint before committing
+- ✅ Ensure all builds pass
+- ✅ Fix all TypeScript errors
+- ⚠️ Test in playground before merging
 
 ---
 
 ## ❌ Common Pitfalls
 
-<!-- Add things to avoid -->
+### Import Paths
+
+- ❌ Don't use relative paths across packages: `../../../@plcl-core/dist`
+- ✅ Use package names: `@plcl/core`
+
+### Package.json Dependencies
+
+- ❌ Don't use incorrect folder paths: `file:../core`
+- ✅ Use actual folder names: `file:../@plcl-core`
+
+### Theme Hook Usage
+
+- ❌ Don't create duplicate theme hooks in `@plcl-ui`
+- ✅ Import `ThemeProvider` and `useTheme` from `@plcl/core`
+
+### Shell Component
+
+- ❌ Don't put Shell in `@plcl-core` (it has desktop-specific dependencies)
+- ✅ Shell lives in `@plcl-ui` with all its variants
+
+### Custom Apps
+
+- ✅ Use `customApps` prop on Shell's desktop variant
+- ✅ Each app needs: `id`, `title`, `icon`, `Component`
+- ✅ Component must accept `AppWindowProps`: `isOpen`, `handleClose`, `zIndex`, `onFocus`, `resetKey`
+
+---
+
+## 📦 @plcl-ui Exports
+
+```typescript
+// Main export
+export { Shell } from "./components/Shell";
+export type { ShellProps, ShellVariant, ShellItemProps } from "./components/Shell";
+
+// Utility
+export { IFrameApp } from "./components/IFrameApp";
+```
+
+### Internal Components (not exported)
+
+- `Window` - Used internally by Shell and custom apps
+- `WindowManager` - Manages multiple windows
+- `Settings` - Built-in settings app
+- `Search` - App search overlay
+- `Desktop`, `Wallpaper`, `Apps` - Desktop environment internals
 
 ---

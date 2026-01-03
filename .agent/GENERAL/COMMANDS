@@ -85,61 +85,60 @@ When the user types specific commands, the agent MUST handle them as follows:
 
 ### `todo: <message>` or `<message>: todo`
 
-**Action**: Add the message to TODO.md
+**Action**: Add the message to the project's PROGRESS file
 
 **Process**:
-1. Read the current TODO.md file
-2. Add a new task with status ⬜ (pending)
-3. Follow the existing TODO format and structure
-4. Place the new task in the appropriate section
+1. Identify the relevant project's PROGRESS file in `.agent/LIVE/<project>/PROGRESS`
+2. Add a new task with status ⬜ (pending) to the Pending Tasks section
+3. Follow the existing PROGRESS format and structure
 
 **Example**:
 - User types: `todo: Add dark mode toggle to settings`
-- Agent adds: `- ⬜ Add dark mode toggle to settings` to TODO.md
+- Agent adds: `- ⬜ Add dark mode toggle to settings` to the project's PROGRESS file
 
 ### `task: <message>` or `<message>: task`
 
-**Action**: Add the task to TODO.md and begin executing it immediately
+**Action**: Add the task to the project's PROGRESS file and begin executing it immediately
 
 **Process**:
-1. Read the current TODO.md file
-2. Add a new task with status 🔄 (in progress)
-3. Follow the existing TODO format and structure
-4. Place the new task in the appropriate section
-5. **IMMEDIATELY** begin working on the task
-6. Plan out the implementation steps before proceeding
-7. Prompt the user with the plan if the task is complex (3+ steps)
-8. Wait for user confirmation before executing complex tasks
-9. Mark the task as ✅ (completed) when finished, after all quality checks pass
+1. Identify the relevant project's PROGRESS file in `.agent/LIVE/<project>/PROGRESS`
+2. Add a new task with status 🔄 (in progress) to the Active Tasks section
+3. Follow the existing PROGRESS format and structure
+4. **IMMEDIATELY** begin working on the task
+5. Plan out the implementation steps before proceeding
+6. Prompt the user with the plan if the task is complex (3+ steps)
+7. Wait for user confirmation before executing complex tasks
+8. Mark the task as ✅ (completed) when finished, after all quality checks pass
+9. Move completed task to Completed Tasks section with date
 
 **Example**:
 - User types: `task: Add dark mode toggle to settings`
-- Agent adds: `- 🔄 Add dark mode toggle to settings` to TODO.md
+- Agent adds: `- 🔄 Add dark mode toggle to settings` to the project's PROGRESS file
 - Agent plans the implementation
 - Agent prompts user with the plan if complex
 - Agent begins execution after confirmation
-- Agent marks as ✅ when complete
+- Agent marks as ✅ when complete and moves to Completed Tasks
 
 ### `now: <message>` or `<message>: now`
 
-**Action**: Execute the task immediately without adding it to TODO.md
+**Action**: Execute the task immediately without adding it to PROGRESS files
 
 **Process**:
-1. **DO NOT** add the task to TODO.md
+1. **DO NOT** add the task to any PROGRESS file
 2. **IMMEDIATELY** begin working on the task
 3. Plan out the implementation steps before proceeding
 4. Prompt the user with the plan if the task is complex (3+ steps)
 5. Wait for user confirmation before executing complex tasks
-6. Complete all quality checks (lint, build, test) but skip TODO.md updates
+6. Complete all quality checks (lint, build, test) but skip PROGRESS updates
 7. The task is considered complete when all quality checks pass
 
 **Example**:
 - User types: `now: Fix typo in Button component`
-- Agent does NOT add to TODO.md
+- Agent does NOT add to PROGRESS files
 - Agent plans the implementation
 - Agent prompts user with the plan if complex
 - Agent begins execution after confirmation
-- Agent completes quality checks but does not update TODO.md
+- Agent completes quality checks but does not update PROGRESS
 
 ### `qna: <question>` or `<question>: qna`
 
@@ -221,6 +220,7 @@ When the user types specific commands, the agent MUST handle them as follows:
   - `code` - Analyze and improve codebase (equivalent to `updatecode:`)
   - `project` - Update PROJECT.md guidelines (equivalent to `updateproject:`)
   - `commands` - Update command documentation in COMMANDS.md (equivalent to `updatecommands:`)
+  - `progress` - Update all `.agent/LIVE/` files including ROADMAP and PROGRESS (equivalent to `updateprogress:`)
 
 **Note**: 
 - `update:` or `:update` (without arguments) defaults to documentation update (`update: docs`)
@@ -228,6 +228,7 @@ When the user types specific commands, the agent MUST handle them as follows:
 - `update: code` or `:update code` is equivalent to `updatecode:` (see below)
 - `update: project` or `:update project` is equivalent to `updateproject:` (see below)
 - `update: commands` or `:update commands` is equivalent to `updatecommands:` (see below)
+- `update: progress` or `:update progress` is equivalent to `updateprogress:` (see below)
 
 **When target is `docs` (default)**:
 
@@ -235,7 +236,7 @@ When the user types specific commands, the agent MUST handle them as follows:
 1. **MANDATORY**: Read all documentation files:
    - PROJECT.md (project guidelines and standards) or equivalent project documentation
    - README.md (root readme)
-   - TODO.md (task tracking and progress)
+   - `.agent/LIVE/ROADMAP` (overall progress and milestones)
    - All package README files (if applicable)
    - Component documentation (if applicable)
    - Configuration documentation files (if exists)
@@ -243,7 +244,7 @@ When the user types specific commands, the agent MUST handle them as follows:
    - COMMANDS (command documentation)
 
 2. **Analyze Project Progress**:
-   - Review TODO.md to identify completed tasks and current status
+   - Review PROGRESS files to identify completed tasks and current status
    - Compare documented features/components with actual implementations
    - Check for inconsistencies between documentation and code
    - Identify missing documentation for new features/components
@@ -276,7 +277,7 @@ When the user types specific commands, the agent MUST handle them as follows:
    - Provide recommendations for further documentation improvements
 
 **Execution Order**:
-1. Read all documentation files (PROJECT.md or equivalent, README.md, TODO.md, package READMEs, etc.)
+1. Read all documentation files (PROJECT.md or equivalent, README.md, ROADMAP, PROGRESS files, package READMEs, etc.)
 2. Read component documentation (if applicable)
 3. Review component implementations (if applicable)
 4. Compare documentation with actual code
@@ -296,8 +297,9 @@ When the user types specific commands, the agent MUST handle them as follows:
 - `update: code` OR `:update code` - Delegates to `updatecode:` command (analyzes and improves codebase)
 - `update: project` OR `:update project` - Delegates to `updateproject:` command (updates PROJECT.md)
 - `update: commands` OR `:update commands` - Delegates to `updatecommands:` command (updates command documentation)
+- `update: progress` OR `:update progress` - Delegates to `updateprogress:` command (updates all .agent/LIVE/ files)
 
-**Note**: When a target is specified, the `update:` command delegates to the corresponding specific command (updatecode:, updateproject:, or updatecommands:). When no target is specified or target is `docs`, it follows the process described above.
+**Note**: When a target is specified, the `update:` command delegates to the corresponding specific command (updatecode:, updateproject:, updatecommands:, or updateprogress:). When no target is specified or target is `docs`, it follows the process described above.
 
 ### `updatecode:` or `:updatecode` or `update: code` or `:update code`
 
@@ -481,6 +483,85 @@ When the user types specific commands, the agent MUST handle them as follows:
 - `updatecommands:` or `:updatecommands` (original format)
 - `update: commands` or `:update commands` (alternative format with space)
 
+### `update: progress` or `:update progress` or `updateprogress:` or `:updateprogress`
+
+**Action**: Update all `.agent/LIVE/` files based on current codebase state. If ROADMAP is empty or missing, create a comprehensive roadmap matched to current progress.
+
+**Process**:
+1. **Analyze Codebase State**:
+   - Review all packages and their current implementation status
+   - Identify components, features, and functionality
+   - Check build status and any issues
+   - Review recent changes and git history if available
+
+2. **Check ROADMAP Status**:
+   - Read `.agent/LIVE/ROADMAP`
+   - If empty or missing, create comprehensive roadmap:
+     - Define project vision based on README and codebase
+     - Create milestones based on current progress
+     - Set up package status tracking
+     - Add cross-project dependencies
+   - If exists, update to match current state:
+     - Update milestone progress
+     - Update package status percentages
+     - Mark completed goals
+     - Add new goals if needed
+
+3. **Update PROGRESS Files**:
+   - Read all project PROGRESS files in `.agent/LIVE/`
+   - Update Current Status section with accurate package state
+   - Move completed tasks to Completed Tasks section
+   - Add any new tasks discovered during analysis
+   - Update task statuses based on codebase state
+   - Add dates to completed work
+
+4. **Update PROJECT_GUIDELINES**:
+   - Review and update coding standards if patterns changed
+   - Update architecture section if structure changed
+   - Add any new conventions discovered
+
+5. **Update PRODUCT**:
+   - Update feature list based on current implementation
+   - Update vision if project direction changed
+   - Update target users if applicable
+
+6. **Sync All Files**:
+   - Ensure ROADMAP milestones match PROGRESS completed tasks
+   - Ensure package statuses are consistent across files
+   - Verify all dates and progress percentages are accurate
+
+7. **Report Changes**:
+   - List all files updated
+   - Summarize changes made to each file
+   - Note any discrepancies found and resolved
+   - Highlight areas needing manual attention
+
+**Execution Order**:
+1. Analyze codebase structure and state
+2. Read all `.agent/LIVE/` files
+3. Create or update ROADMAP
+4. Update all PROGRESS files
+5. Update PROJECT_GUIDELINES if needed
+6. Update PRODUCT if needed
+7. Verify consistency across all files
+8. Report summary of all changes
+
+**Important Notes**:
+- Creates ROADMAP from scratch if empty/missing
+- Matches roadmap milestones to actual progress
+- Updates all `.agent/LIVE/` files in one command
+- Does NOT modify code, only `.agent/LIVE/` documentation
+- Preserves existing progress log entries
+- Adds new entries for discovered changes
+
+**Example**:
+- User types: `update: progress` OR `:update progress` OR `updateprogress:` OR `:updateprogress`
+- Agent analyzes codebase, creates/updates ROADMAP if needed, updates all PROGRESS files, syncs PROJECT_GUIDELINES and PRODUCT, reports all changes made
+
+**Note**: All of these formats are equivalent:
+- `updateprogress:` or `:updateprogress` (original format)
+- `update: progress` or `:update progress` (alternative format with space)
+
 ### `clean:` or `:clean`
 
 **Action**: Clean up code by removing unused code, imports, variables, console statements, and other cleanup tasks
@@ -563,7 +644,8 @@ When the user types specific commands, the agent MUST handle them as follows:
    - INSTRUCTIONS or .cursorrules (agent instructions)
    - PROJECT.md (project guidelines and standards) or equivalent
    - README.md (root readme)
-   - TODO.md (task tracking)
+   - `.agent/LIVE/ROADMAP` (overall progress)
+   - Project PROGRESS files (task tracking)
    - All package README files (if applicable)
    - Configuration documentation files (if exists)
    - COMMANDS (command documentation)
@@ -736,14 +818,15 @@ When the user types specific commands, the agent MUST handle them as follows:
 
 **Process**:
 1. **Execute Commands in This Order**:
-   - **Step 1**: Run `plan:` - Plan out next development steps and document them in TODO.md
+   - **Step 1**: Run `plan:` - Plan out next development steps and document them in PROGRESS files
    - **Step 2**: Run `clean:` - Clean up unused code, imports, console statements
    - **Step 3**: Run `updatecode:` - Analyze code quality, find improvements, fix simple issues
    - **Step 4**: Run `organize:` - Organize file structure and code organization
    - **Step 5**: Run `check:` - Run all lints and builds, fix all issues
-   - **Step 6**: Run `update: project` - Update PROJECT.md with current state
-   - **Step 7**: Run `update: docs` - Update all documentation files
-   - **Step 8**: Run `update: commands` - Update command documentation
+   - **Step 6**: Run `update: progress` - Update all `.agent/LIVE/` files and ROADMAP
+   - **Step 7**: Run `update: project` - Update PROJECT.md with current state
+   - **Step 8**: Run `update: docs` - Update all documentation files
+   - **Step 9**: Run `update: commands` - Update command documentation
 
 2. **Command Execution Rules**:
    - Execute each command fully before moving to the next
@@ -758,14 +841,15 @@ When the user types specific commands, the agent MUST handle them as follows:
    - Note any issues or failures that occurred
 
 **Execution Order** (Detailed):
-1. `plan:` - Plan next development steps and document in TODO.md
+1. `plan:` - Plan next development steps and document in PROGRESS files
 2. `clean:` - Clean unused code and imports
 3. `updatecode:` - Improve code quality (will run lint/build internally if auto-fixing)
 4. `organize:` - Reorganize code structure (will run lint/build internally)
 5. `check:` - Final comprehensive lint and build check across all packages
-6. `update: project` - Update PROJECT.md guidelines
-7. `update: docs` - Update all documentation files
-8. `update: commands` - Update command documentation in COMMANDS
+6. `update: progress` - Update all `.agent/LIVE/` files and ROADMAP
+7. `update: project` - Update PROJECT.md guidelines
+8. `update: docs` - Update all documentation files
+9. `update: commands` - Update command documentation in COMMANDS
 
 **Important Notes**:
 - This workflow is comprehensive and may take significant time
@@ -777,7 +861,7 @@ When the user types specific commands, the agent MUST handle them as follows:
 
 **Example**:
 - User types: `workflow:` OR `:workflow`
-- Agent executes: plan → clean → updatecode → organize → check → update project → update docs → update commands
+- Agent executes: plan → clean → updatecode → organize → check → update progress → update project → update docs → update commands
 - Agent reports summary of all commands executed
 
 **Note**: This command provides a complete maintenance workflow. For specific tasks, use individual commands instead.
@@ -790,7 +874,7 @@ When the user types specific commands, the agent MUST handle them as follows:
 - **First parameter (`targets`)**: One or more comma-separated targets to streamline. If omitted, defaults to all targets.
   - `code` - Streamline code quality, remove duplication, fix issues
   - `docs` - Streamline documentation, ensure consistency and completeness
-  - `todo` - Streamline TODO.md, organize tasks, remove completed items, prioritize
+  - `progress` - Streamline PROGRESS files, organize tasks, remove completed items, prioritize
   - `project` - Streamline PROJECT.md, update guidelines, ensure accuracy
   - `commands` - Streamline COMMANDS, ensure all commands are documented
   - `all` (or omitted) - Streamline all targets in sequence
@@ -814,8 +898,8 @@ When the user types specific commands, the agent MUST handle them as follows:
      - Ensure documentation is consistent and complete
      - Verify examples are accurate
    
-   - **For `todo` target**:
-     - Read TODO.md
+   - **For `progress` target**:
+     - Read all project PROGRESS files
      - Remove or archive completed tasks that are no longer relevant
      - Organize tasks by priority and dependencies
      - Consolidate duplicate or similar tasks
@@ -834,7 +918,7 @@ When the user types specific commands, the agent MUST handle them as follows:
      - Verify command examples are accurate
 
 3. **Execution Order**:
-   - Execute targets in logical order: `code` → `todo` → `project` → `docs` → `commands`
+   - Execute targets in logical order: `code` → `progress` → `project` → `docs` → `commands`
    - Each target completes fully before moving to the next
    - Report status after each target completes
 
@@ -846,7 +930,7 @@ When the user types specific commands, the agent MUST handle them as follows:
 
 **Execution Order** (When `all` or multiple targets):
 1. `code` - Streamline code (updatecode → clean → organize → check)
-2. `todo` - Streamline TODO.md
+2. `progress` - Streamline PROGRESS files
 3. `project` - Streamline PROJECT.md
 4. `docs` - Streamline documentation
 5. `commands` - Streamline COMMANDS
@@ -855,13 +939,13 @@ When the user types specific commands, the agent MUST handle them as follows:
 - Targets can be specified individually or in combination
 - Each target maintains its own quality checks
 - Code-related targets run before documentation targets
-- TODO streamlining helps maintain organized task tracking
+- PROGRESS streamlining helps maintain organized task tracking
 - Use specific targets for focused updates, use `all` for comprehensive streamlining
 
 **Examples**:
 - `streamline:` OR `:streamline` OR `streamline: all` - Streamline all targets
 - `streamline: code` - Streamline only code quality
-- `streamline: docs, todo` - Streamline documentation and TODO.md
+- `streamline: docs, progress` - Streamline documentation and PROGRESS files
 - `streamline: code, docs, project` - Streamline code, docs, and project guidelines
 
 **Example**:
@@ -870,68 +954,81 @@ When the user types specific commands, the agent MUST handle them as follows:
 
 ### `plan:` or `:plan`
 
-**Action**: Plan out next development steps and document them in TODO.md
+**Action**: Plan out next development steps aligned with ROADMAP milestones and document them in PROGRESS files
 
 **Process**:
-1. **MANDATORY**: Read TODO.md to understand current tasks and status
-2. **MANDATORY**: Read PROJECT.md (or equivalent) to understand project guidelines and standards
-3. **MANDATORY**: Read README.md to understand project overview and structure
-4. **Analyze Current State**:
-   - Review pending tasks in TODO.md
-   - Identify completed tasks and current progress
+1. **MANDATORY**: Read `.agent/LIVE/ROADMAP` to understand:
+   - Overall project vision and direction
+   - Current milestone and its goals
+   - Package status and progress percentages
+   - Cross-project dependencies
+   - Upcoming milestones
+2. **MANDATORY**: Read project PROGRESS files to understand current tasks and status
+3. **MANDATORY**: Read PROJECT.md (or equivalent) to understand project guidelines and standards
+4. **MANDATORY**: Read README.md to understand project overview and structure
+5. **Analyze Current State Against ROADMAP**:
+   - Review current milestone goals in ROADMAP
+   - Identify which milestone goals are complete vs pending
+   - Review pending tasks in PROGRESS files
    - Check for any blockers or dependencies
-   - Review "Active Checks" section for ongoing requirements
-   - Review "End of Development" section for release-related tasks
-5. **Plan Development Steps**:
-   - Identify logical next steps based on current state
-   - Break down complex tasks into actionable steps
-   - Prioritize tasks based on dependencies and importance
-   - Consider project guidelines and standards when planning
+   - Identify gaps between ROADMAP goals and current tasks
+6. **Plan Development Steps (Aligned with ROADMAP)**:
+   - Prioritize tasks that advance current milestone goals
+   - Identify logical next steps based on milestone priorities
+   - Break down milestone goals into actionable tasks
+   - Consider cross-project dependencies from ROADMAP
    - Identify any prerequisites or dependencies
-6. **Document Plan in TODO.md**:
-   - Add planned development steps to TODO.md
+7. **Document Plan in PROGRESS Files**:
+   - Add planned development steps to appropriate project PROGRESS files
    - Use clear, descriptive task descriptions
    - Mark tasks with status ⬜ (pending)
-   - Place tasks in appropriate sections (Tasks, Active Checks, End of Development)
    - Group related tasks together
-   - Include any dependencies or prerequisites in task descriptions
-7. **Report Plan**:
+   - Reference which milestone goal each task supports
+8. **Update ROADMAP**:
+   - Update milestone progress percentages
+   - Mark completed milestone goals
+   - Update package status if changed
+   - Add any new goals discovered during planning
+9. **Report Plan**:
    - Summarize the planned development steps
+   - Show alignment with current milestone goals
    - Explain the reasoning behind the plan
    - Highlight any dependencies or prerequisites
-   - Note any considerations or constraints
+   - Note progress toward milestone completion
 
 **Execution Order**:
-1. Read TODO.md, PROJECT.md (or equivalent), and README.md
-2. Analyze current project state and pending tasks
-3. Plan logical next development steps
-4. Document plan in TODO.md
-5. Report summary of planned steps
+1. Read ROADMAP to understand milestones and goals
+2. Read PROGRESS files, PROJECT.md, and README.md
+3. Analyze current state against ROADMAP milestones
+4. Plan tasks that advance milestone goals
+5. Document plan in PROGRESS files
+6. Update ROADMAP with current progress
+7. Report summary with milestone alignment
 
 **Important Notes**:
 - Do NOT execute tasks, only plan and document them
-- Focus on logical, actionable development steps
-- Consider dependencies and prerequisites when planning
-- Follow TODO.md structure and formatting
+- **Align all plans with current ROADMAP milestone**
+- Prioritize tasks that complete milestone goals
+- Consider cross-project dependencies from ROADMAP
+- Follow PROGRESS file structure and formatting
 - Ensure planned tasks are clear and actionable
 
 **Example**:
 - User types: `plan:` OR `:plan`
-- Agent reads TODO.md, PROJECT.md (or equivalent), and README.md, analyzes current state, plans next development steps, documents them in TODO.md, and reports the plan
+- Agent reads ROADMAP to understand milestone goals, reads PROGRESS files, analyzes what's needed to complete current milestone, plans tasks aligned with those goals, documents in PROGRESS files, updates ROADMAP progress, and reports the plan with milestone alignment
 
 ### `next:` or `:next`
 
-**Action**: Plan out todo items and start executing them via task
+**Action**: Plan out pending tasks and start executing them via task
 
 **Process**:
-1. **MANDATORY**: Read TODO.md to identify pending tasks
+1. **MANDATORY**: Read project PROGRESS files to identify pending tasks
 2. **MANDATORY**: Read PROJECT.md (or equivalent) to understand project guidelines
 3. **Analyze Pending Tasks**:
-   - Review all tasks with status ⬜ (pending) in TODO.md
+   - Review all tasks with status ⬜ (pending) in PROGRESS files
    - Identify the most logical next task(s) to work on
    - Check for dependencies or prerequisites
    - Consider task priority and complexity
-   - Review "Active Checks" section for ongoing requirements
 4. **Plan Task Execution**:
    - Select the next task(s) to execute
    - Break down complex tasks into actionable steps
@@ -939,7 +1036,7 @@ When the user types specific commands, the agent MUST handle them as follows:
    - Plan the implementation approach
    - Consider project guidelines and standards
 5. **Start Execution via Task**:
-   - Update selected task status to 🔄 (in progress) in TODO.md
+   - Update selected task status to 🔄 (in progress) in PROGRESS file
    - **IMMEDIATELY** begin working on the task using the `task:` command workflow
    - Plan out the implementation steps before proceeding
    - Prompt the user with the plan if the task is complex (3+ steps)
@@ -952,7 +1049,7 @@ When the user types specific commands, the agent MUST handle them as follows:
    - Update status as work progresses
 
 **Execution Order**:
-1. Read TODO.md and PROJECT.md
+1. Read PROGRESS files and PROJECT.md
 2. Analyze pending tasks and select next task(s)
 3. Plan task execution approach
 4. Update task status to 🔄 (in progress)
@@ -969,21 +1066,21 @@ When the user types specific commands, the agent MUST handle them as follows:
 
 **Example**:
 - User types: `next:` OR `:next`
-- Agent reads TODO.md, identifies next pending task, updates status to 🔄, plans implementation, begins execution, completes with quality checks, and marks as ✅ when done
+- Agent reads PROGRESS files, identifies next pending task, updates status to 🔄, plans implementation, begins execution, completes with quality checks, and marks as ✅ when done
 
 ### `work:` or `:work`
 
-**Action**: Start working on unfinished todo items from TODO.md
+**Action**: Start working on unfinished tasks from PROGRESS files
 
 **Process**:
-1. **MANDATORY**: Read TODO.md to identify unfinished tasks
+1. **MANDATORY**: Read project PROGRESS files to identify unfinished tasks
 2. **MANDATORY**: Read PROJECT.md to understand project guidelines
 3. **Identify Unfinished Tasks**:
-   - Review all tasks with status ⬜ (pending) in TODO.md
+   - Review all tasks with status ⬜ (pending) in PROGRESS files
    - Identify the first or most logical unfinished task to work on
    - Check for dependencies or prerequisites if applicable
 4. **Start Execution**:
-   - Update selected task status to 🔄 (in progress) in TODO.md
+   - Update selected task status to 🔄 (in progress) in PROGRESS file
    - **IMMEDIATELY** begin working on the task using the `task:` command workflow
    - Plan out the implementation steps before proceeding
    - Prompt the user with the plan if the task is complex (3+ steps)
@@ -996,7 +1093,7 @@ When the user types specific commands, the agent MUST handle them as follows:
    - Update status as work progresses
 
 **Execution Order**:
-1. Read TODO.md and PROJECT.md
+1. Read PROGRESS files and PROJECT.md
 2. Identify first/most logical unfinished task
 3. Update task status to 🔄 (in progress)
 4. Begin execution following `task:` command workflow
@@ -1004,7 +1101,7 @@ When the user types specific commands, the agent MUST handle them as follows:
 6. Mark task as ✅ (completed) when done
 
 **Important Notes**:
-- This command starts working immediately on unfinished todos
+- This command starts working immediately on unfinished tasks
 - Follows the same execution workflow as `task:` command
 - Must complete all quality checks before marking task complete
 - Should prioritize tasks logically, typically starting with the first pending task
@@ -1012,7 +1109,7 @@ When the user types specific commands, the agent MUST handle them as follows:
 
 **Example**:
 - User types: `work:` OR `:work`
-- Agent reads TODO.md, identifies first unfinished task, updates status to 🔄, plans implementation, begins execution, completes with quality checks, and marks as ✅ when done
+- Agent reads PROGRESS files, identifies first unfinished task, updates status to 🔄, plans implementation, begins execution, completes with quality checks, and marks as ✅ when done
 
 ### `help:` or `:help` or `help: <command>` or `<command>: help`
 
@@ -1045,15 +1142,15 @@ When the user types specific commands, the agent MUST handle them as follows:
   - Example: `command: test Run all test suites`
 
 - **`todo: <message>`** or **`<message>: todo`**
-  - Add a new task to TODO.md with status ⬜ (pending)
+  - Add a new task to the project's PROGRESS file with status ⬜ (pending)
   - Example: `todo: Add dark mode toggle`
 
 - **`task: <message>`** or **`<message>: task`**
-  - Add a task to TODO.md with status 🔄 (in progress) and begin executing it immediately
+  - Add a task to PROGRESS with status 🔄 (in progress) and begin executing it immediately
   - Example: `task: Add dark mode toggle`
 
 - **`now: <message>`** or **`<message>: now`**
-  - Execute the task immediately without adding it to TODO.md
+  - Execute the task immediately without adding it to PROGRESS files
   - Example: `now: Fix typo in Button component`
 
 - **`qna: <question>`** or **`<question>: qna`**
@@ -1069,13 +1166,14 @@ When the user types specific commands, the agent MUST handle them as follows:
   - Example: `check:`
 
 - **`update:`** or **`:update`** or **`update: <target>`** or **`:update <target>`**
-  - Update documentation, code, project guidelines, or commands based on target parameter
-  - Parameters: `target` (optional, defaults to `docs`): `docs`, `code`, `project`, or `commands`
+  - Update documentation, code, project guidelines, commands, or progress based on target parameter
+  - Parameters: `target` (optional, defaults to `docs`): `docs`, `code`, `project`, `commands`, or `progress`
   - Examples:
     - `update:` or `update: docs` - Update all documentation files
     - `update: code` - Analyze and improve codebase
     - `update: project` - Update PROJECT.md guidelines
     - `update: commands` - Update command documentation in COMMANDS.md
+    - `update: progress` - Update all `.agent/LIVE/` files including ROADMAP
 
 - **`updatecode:`** or **`:updatecode`** or **`update: code`** or **`:update code`**
   - Analyze the codebase for code quality issues, simplifications, cleanup opportunities, unfinished code, and improvements
@@ -1088,6 +1186,10 @@ When the user types specific commands, the agent MUST handle them as follows:
 - **`updatecommands:`** or **`:updatecommands`** or **`update: commands`** or **`:update commands`**
   - Update command documentation in COMMANDS.md to ensure all commands are properly documented
   - Example: `updatecommands:` or `update: commands`
+
+- **`updateprogress:`** or **`:updateprogress`** or **`update: progress`** or **`:update progress`**
+  - Update all `.agent/LIVE/` files based on current codebase state. Creates ROADMAP if empty/missing.
+  - Example: `updateprogress:` or `update: progress`
 
 - **`clean:`** or **`:clean`**
   - Clean up code by removing unused imports, variables, console statements, and other cleanup tasks
@@ -1102,7 +1204,7 @@ When the user types specific commands, the agent MUST handle them as follows:
   - Example: `organize:` or `:organize`
 
 - **`workflow:`** or **`:workflow`**
-  - Run all maintenance commands sequentially in a sensible order (plan → clean → updatecode → organize → check → update project → update docs → update commands)
+  - Run all maintenance commands sequentially in a sensible order (plan → clean → updatecode → organize → check → update progress → update project → update docs → update commands)
   - Example: `workflow:`
 
 - **`streamline:`** or **`:streamline`** or **`streamline: <targets>`** or **`:streamline <targets>`**
@@ -1111,18 +1213,18 @@ When the user types specific commands, the agent MUST handle them as follows:
   - Examples:
     - `streamline:` or `streamline: all` - Streamline all targets
     - `streamline: code` - Streamline only code quality
-    - `streamline: docs, todo` - Streamline documentation and TODO.md
+    - `streamline: docs, progress` - Streamline documentation and PROGRESS files
 
 - **`plan:`** or **`:plan`**
-  - Plan out next development steps and document them in TODO.md
+  - Plan next development steps aligned with ROADMAP milestones and document in PROGRESS files
   - Example: `plan:` or `:plan`
 
 - **`next:`** or **`:next`**
-  - Plan out todo items and start executing them via task
+  - Plan out pending tasks and start executing them via task
   - Example: `next:` or `:next`
 
 - **`work:`** or **`:work`**
-  - Start working on unfinished todo items from TODO.md
+  - Start working on unfinished tasks from PROGRESS files
   - Example: `work:` or `:work`
 
 - **`help:`** or **`:help`** or **`help: <command>`** or **`<command>: help`**

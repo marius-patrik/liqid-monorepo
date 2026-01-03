@@ -29,7 +29,6 @@ export { default as Loading } from './components/Loading';
 export { default as Skeleton } from './components/Skeleton';
 
 // Navigation & Overlay
-export { default as Tabs } from './components/Tabs';
 export { default as Menu } from './components/Menu';
 export { default as Burger } from './components/Burger';
 export { default as Drawer } from './components/Drawer';
@@ -56,6 +55,9 @@ export { default as Sidebar } from './components/Sidebar';
 export { default as SidebarNavigation } from './components/SidebarNavigation';
 export { default as NavigationMenu } from './components/NavigationMenu';
 export { useNavigationMenu } from './components/NavigationMenu';
-export { default as Shell } from './components/Shell';
 export { default as Text } from './components/Text';
 export { default as Title } from './components/Title';
+
+// Theme
+export { ThemeProvider, ThemeContext, useTheme } from './hooks/useTheme';
+export type { ThemeMode } from './hooks/useTheme';

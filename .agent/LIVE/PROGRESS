@@ -14,21 +14,124 @@ Track development progress and milestones. Update after completing significant w
 
 ## 📍 Current Status
 
-<!-- Overview of where the project stands -->
+**Overall**: 🟢 Active Development
+
+The PLC Library monorepo is in active development with core architecture established. Major refactoring completed to consolidate desktop functionality into a single `Shell` component with multiple variants.
+
+**Current Focus**: Complete v0.1.0 milestone (Documentation site + Playground)
+
+### Package Status
+
+| Package | Status | Description |
+|---------|--------|-------------|
+| `@plcl-core` | ✅ | Core UI components with glassmorphism styling (45+ components) |
+| `@plcl-core-types` | ✅ | Type definitions for core components |
+| `@plcl-ui` | ✅ | Desktop UI layer (Shell component with 6 variants) |
+| `@plcl-ui-types` | ✅ | Type definitions for desktop UI |
+| `docs` | 🔄 | Documentation website - **priority to complete v0.1.0** |
+| `playground` | 🔄 | Component playground - **priority to complete v0.1.0** |
+
+---
+
+## 🎯 Active Tasks (Milestone v0.1.0)
+
+### Documentation Site (Required for v0.1.0)
+- ✅ Set up docs site structure with navigation (Shell sidebar variant)
+- ✅ Create component showcase page layout
+- ✅ Add installation and getting started guide
+- 🔄 Add interactive examples for core components (Button, Card, Input, etc.)
+- ⚪ Add Shell component documentation with all 6 variants
+- ⚪ Document custom apps API with examples
+
+### Playground (Required for v0.1.0)
+- ✅ Set up playground with Shell app variant layout
+- ✅ Add live component testing area (Buttons, Inputs, Feedback, Data, Overlays)
+- ✅ Support theme switching in playground (SegmentedControl)
+- ⚪ Add code preview for examples
+
+---
+
+## 📋 Upcoming Tasks (Milestone v0.2.0)
+
+### Desktop App Examples
+- ⚪ Create example Calculator app
+- ⚪ Create example Notes app
+- ⚪ Create example File Browser app
+- ⚪ Document how to create custom apps
+
+### Full Documentation
+- ⚪ Complete API reference for all components
+- ⚪ Add accessibility documentation
+- ⚪ Add theming guide
+- ⚪ Add migration guide from other libraries
 
 ---
 
 ## 📜 Progress Log
 
-<!-- Chronological log, newest first -->
+### 2026-01-03 (Latest Session)
 
-### YYYY-MM-DD
-- 
+**Documentation & Playground Setup**
+
+- ✅ Updated docs app to use Shell component with sidebar variant
+- ✅ Added SidebarNavigation with documentation sections
+- ✅ Created Getting Started page with installation and usage examples
+- ✅ Updated playground app to use Shell component with app variant
+- ✅ Added comprehensive component testing sections (Buttons, Inputs, Feedback, Data Display, Overlays)
+- ✅ Implemented theme toggle using SegmentedControl
+- ✅ Fixed package.json dependencies to use correct paths (`@plcl-core`, `@plcl-ui`)
+- ✅ Fixed CSS import paths to use `@plcl/core/styles.css`
+- ✅ Added all library dependencies including `@plcl/core-types`, `@plcl/ui-types`, `@tabler/icons-react`
+
+**Shell Component Consolidation**
+
+- ✅ Created unified `Shell` component with 6 variants: `app`, `desktop`, `page`, `sidebar`, `web`, `window`
+- ✅ Removed redundant components:
+  - Deleted `DesktopHeader.tsx` - inlined in Shell's desktop variant
+  - Deleted `DesktopFooter.tsx` - inlined in Shell's desktop variant
+  - Deleted `Explorer.tsx` - replaced by Shell's desktop variant
+  - Deleted `Clock.tsx` - inlined in Shell's desktop variant
+- ✅ Merged `Settings.tsx` and `SettingsAppearance.tsx` into single `Settings.tsx`
+- ✅ Restored `Search.tsx` component for app search functionality
+- ✅ Simplified exports from `@plcl-ui`:
+  - `Shell` - main component with all variants
+  - `IFrameApp` - for embedding web apps
+  - Type exports: `ShellProps`, `ShellVariant`, `ShellItemProps`
+
+**Current @plcl-ui Components**:
+- `Shell.tsx` - Main component with desktop/app/page/sidebar/web/window variants
+- `Window.tsx` - Draggable/resizable window component
+- `WindowManager.tsx` - Multi-window management
+- `Settings.tsx` - Appearance settings (theme, wallpaper, icons, dock, layout)
+- `Search.tsx` - App search overlay
+- `Desktop.tsx` - Desktop container (internal)
+- `Wallpaper.tsx` - Desktop background (internal)
+- `Apps.tsx` - Desktop icons (internal)
+- `IFrameApp.tsx` - Iframe wrapper for web apps
+
+**Custom Apps Support**:
+- ✅ Users can add custom apps via `customApps` prop on Shell's desktop variant
+- ✅ Apps defined with `AppDefinition` interface from `@plcl/ui-types`
+- ✅ Apps appear in dock, search, and desktop automatically
+
+### 2026-01-03 (Earlier)
+
+**Architecture Refactoring - Shell & Theme Separation**
+
+- ✅ Removed `Shell.tsx` from `@plcl-core` - now only in `@plcl-ui`
+- ✅ Created `useTheme` hook in `@plcl-core/src/hooks/useTheme.tsx`
+- ✅ Exported `ThemeProvider`, `ThemeContext`, `useTheme`, `ThemeMode` from `@plcl-core`
+- ✅ Fixed type errors in `Accordion`, `Popover`, `Tooltip` (added `id` property)
+- ✅ Fixed `@plcl-ui` imports to use package names
+- ✅ Removed `Tabs.tsx` from `@plcl-core` exports (file was deleted)
 
 ---
 
-## 🎯 Next Steps
+## 📝 Notes
 
-<!-- Upcoming work and priorities -->
+- **v0.2.0 is ahead of v0.1.0** - Desktop UI features complete, but both blocked by documentation
+- Documentation is the critical path to completing both milestones
+- Build order: core-types → core → ui-types → ui → apps
+- All packages use npm workspaces for dependency management
 
 ---

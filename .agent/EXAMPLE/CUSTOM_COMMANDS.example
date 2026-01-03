@@ -1,6 +1,6 @@
 # Custom Commands
 
-Project-specific commands that supplement `agent/GENERAL/COMMANDS`.
+Project-specific commands that supplement `.agent/GENERAL/COMMANDS`.
 
 ## Command Format
 

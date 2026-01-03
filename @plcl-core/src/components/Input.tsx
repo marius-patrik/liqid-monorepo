@@ -1,16 +1,58 @@
 import type { FC, HTMLAttributes, InputHTMLAttributes, ReactNode } from 'react';
 import { type StylingProps, getStylingClasses } from '../styles';
 
+/**
+ * Props for the Input component.
+ */
 export interface InputProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
 		StylingProps {
+	/** Visual style variant */
 	variant?: 'filled' | 'unstyled';
+	/** Error state - can be boolean or error message */
 	error?: boolean | ReactNode;
+	/** Content to render on the left side of the input */
 	leftSection?: ReactNode;
+	/** Content to render on the right side of the input */
 	rightSection?: ReactNode;
-	wrapperProps?: InputHTMLAttributes<HTMLDivElement>; // Use div props
+	/** Props to pass to the wrapper div */
+	wrapperProps?: InputHTMLAttributes<HTMLDivElement>;
 }
 
+/**
+ * Input - A text input component with optional left/right sections.
+ *
+ * Features include:
+ * - Left and right sections for icons or actions
+ * - Error state styling
+ * - Multiple sizes (xs, sm, md, lg, xl)
+ * - Filled or unstyled variants
+ * - Full StylingProps support
+ *
+ * @example Basic input
+ * ```tsx
+ * <Input placeholder="Enter text..." />
+ * ```
+ *
+ * @example Input with icon
+ * ```tsx
+ * <Input
+ *   leftSection={<IconSearch size={16} />}
+ *   placeholder="Search..."
+ * />
+ * ```
+ *
+ * @example Input with error
+ * ```tsx
+ * <Input error="This field is required" />
+ * ```
+ *
+ * @example Different sizes
+ * ```tsx
+ * <Input size="sm" placeholder="Small" />
+ * <Input size="lg" placeholder="Large" />
+ * ```
+ */
 const Input: FC<InputProps> = ({
 	variant = 'filled',
 	error,

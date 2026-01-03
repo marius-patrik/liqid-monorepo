@@ -12,8 +12,11 @@
     "lint:check": "biome check"
   },
   "dependencies": {
-    "@plcl/core": "file:../core",
-    "@plcl/ui": "file:../ui",
+    "@plcl/core": "file:../@plcl-core",
+    "@plcl/core-types": "file:../@plcl-core-types",
+    "@plcl/ui": "file:../@plcl-ui",
+    "@plcl/ui-types": "file:../@plcl-ui-types",
+    "@tabler/icons-react": "^3.36.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

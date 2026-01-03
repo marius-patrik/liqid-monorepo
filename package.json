@@ -22,7 +22,7 @@
     "build:types": "cd @plcl-core-types && npm run build",
     "build:lib": "cd @plcl-core && npm run build",
     "build:docs": "cd docs && npm run build",
-    "install:all": "cd @plcl-core-types && npm install && cd ../@plcl-ui-types && npm install && cd ../@plcl-core && npm install && cd ../@plcl-ui && npm install && cd ../docs && npm install && cd ../playground && npm install",
+    "install:all": "find . -name 'node_modules' -type d -prune -exec rm -rf {} + && rm -f package-lock.json */package-lock.json && npm install",
     "format": "npm run format:types && npm run format:lib && npm run format:docs",
     "format:types": "cd @plcl-core-types && npm run format",
     "format:lib": "cd @plcl-core && npm run format",

@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { type StylingProps, getStylingClasses } from '../styles';
 
 export interface TooltipProps extends StylingProps {
+	id?: string;
 	label: ReactNode;
 	children: ReactNode;
 	position?: 'top' | 'right' | 'bottom' | 'left';

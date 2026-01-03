@@ -5,21 +5,33 @@ import { type Radius, type StylingProps, getStylingClasses } from '../styles';
 interface AccordionContextValue {
 	value: string | null;
 	onChange: (value: string) => void;
-	icon?: ReactNode; // Default icon
+	icon?: ReactNode;
 	radius?: Radius;
 	variant?: 'default' | 'contained' | 'filled' | 'separated';
 }
 
 const AccordionContext = createContext<AccordionContextValue | null>(null);
 
+/**
+ * Props for the Accordion component.
+ */
 export interface AccordionProps extends StylingProps {
+	/** Unique identifier */
+	id?: string;
+	/** Controlled value - the ID of the currently open item */
 	value?: string;
+	/** Default open item ID for uncontrolled usage */
 	defaultValue?: string;
+	/** Callback when the open item changes */
 	onChange?: (value: string) => void;
+	/** Accordion items (Accordion.Item components) */
 	children: ReactNode;
+	/** Visual variant */
 	variant?: 'default' | 'contained' | 'filled' | 'separated';
+	/** Border radius size */
 	radius?: Radius;
-	className?: string; // Explicit
+	/** Additional CSS classes */
+	className?: string;
 }
 
 const Accordion: FC<AccordionProps> & {

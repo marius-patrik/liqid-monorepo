@@ -1,11 +1,10 @@
-// Interface
-export { DesktopFooter } from "./components/DesktopFooter";
-export { DesktopHeader } from "./components/DesktopHeader";
-export { DesktopIcons } from "./components/DesktopIcons";
-export { Explorer } from "./components/Explorer";
-// App Wrapper (for embedding standalone apps in a Window)
+// Shell - main component with variants: app, desktop, page, sidebar, web, window
+
+// IFrameApp - for embedding web apps
 export { IFrameApp } from "./components/IFrameApp";
-export { Wallpaper } from "./components/Wallpaper";
-// Components
-export { Window } from "./components/Window";
-export { WindowManager } from "./components/WindowManager";
+export type {
+  ShellItemProps,
+  ShellProps,
+  ShellVariant,
+} from "./components/Shell";
+export { default as Shell } from "./components/Shell";

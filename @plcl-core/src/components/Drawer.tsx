@@ -1,17 +1,57 @@
 import type { FC, HTMLAttributes, PropsWithChildren, ReactNode } from 'react';
 import { useEffect, useState } from 'react';
 
+/**
+ * Props for the Drawer component.
+ */
 export interface DrawerProps
 	extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
+	/** Whether the drawer is visible */
 	isOpen: boolean;
+	/** Callback when the drawer is closed */
 	onClose: () => void;
+	/** Title displayed in the drawer header */
 	title?: ReactNode;
+	/** Side from which the drawer slides in */
 	position?: 'left' | 'right' | 'top' | 'bottom';
-	size?: string | number; // e.g. "300px", "50%", "xl"
+	/** Width/height of the drawer (e.g., "300px", "50%") */
+	size?: string | number;
+	/** Padding class to apply (e.g., "p-4") */
 	padding?: string;
+	/** Whether to show an overlay behind the drawer */
 	overlay?: boolean;
 }
 
+/**
+ * Drawer - A slide-in panel component from any edge of the screen.
+ *
+ * Features:
+ * - Slides in from left, right, top, or bottom
+ * - Animated open/close transitions
+ * - Optional overlay backdrop
+ * - Click outside or escape to close
+ * - Customizable size and padding
+ *
+ * @example Basic drawer
+ * ```tsx
+ * <Drawer isOpen={isOpen} onClose={() => setIsOpen(false)}>
+ *   <p>Drawer content</p>
+ * </Drawer>
+ * ```
+ *
+ * @example Right-side drawer with title
+ * ```tsx
+ * <Drawer
+ *   isOpen={isOpen}
+ *   onClose={() => setIsOpen(false)}
+ *   position="right"
+ *   title="Settings"
+ *   size="400px"
+ * >
+ *   <SettingsForm />
+ * </Drawer>
+ * ```
+ */
 const Drawer: FC<PropsWithChildren<DrawerProps>> = ({
 	isOpen,
 	onClose,

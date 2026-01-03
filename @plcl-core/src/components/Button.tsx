@@ -2,22 +2,69 @@ import type { ButtonHTMLAttributes, FC, PropsWithChildren } from 'react';
 import { Link as WouterLink } from 'wouter';
 import { type StylingProps, getStylingClasses } from '../styles';
 
+/**
+ * Available button style variants.
+ * - `glass` - Glassmorphism style with blur effect (default)
+ * - `glass-highlight` - Highlighted glass style for primary actions
+ * - `icon` - Icon-only button with scale animation
+ * - `text` - Text-only button without background
+ * - `outline` - Bordered button without fill
+ */
 export type ButtonVariant =
 	| 'glass'
 	| 'glass-highlight'
 	| 'icon'
 	| 'text'
 	| 'outline';
+
+/** Button render type - either a button element or a link */
 export type ButtonType = 'button' | 'link';
 
+/**
+ * Props for the Button component.
+ */
 export interface ButtonProps
 	extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>,
 		StylingProps {
+	/** Visual style variant */
 	variant?: ButtonVariant;
+	/** Render as button or link element */
 	as?: ButtonType;
+	/** URL for link variant (when as="link") */
 	href?: string;
 }
 
+/**
+ * Button - A versatile button component with glassmorphism styling.
+ *
+ * Supports multiple visual variants and can render as either a button or link element.
+ * Includes full support for StylingProps for margin, padding, radius, and shadow customization.
+ *
+ * @example Basic usage
+ * ```tsx
+ * <Button>Click me</Button>
+ * ```
+ *
+ * @example Primary action button
+ * ```tsx
+ * <Button variant="glass-highlight">Submit</Button>
+ * ```
+ *
+ * @example Icon button
+ * ```tsx
+ * <Button variant="icon"><IconSettings /></Button>
+ * ```
+ *
+ * @example Link button
+ * ```tsx
+ * <Button as="link" href="/settings">Go to Settings</Button>
+ * ```
+ *
+ * @example With size
+ * ```tsx
+ * <Button size="lg">Large Button</Button>
+ * ```
+ */
 const Button: FC<PropsWithChildren<ButtonProps>> = ({
 	variant = 'glass',
 	as = 'button',

@@ -1,16 +1,51 @@
 import type { FC, InputHTMLAttributes, ReactNode } from 'react';
 import { type StylingProps, getStylingClasses } from '../styles';
 
+/**
+ * Props for the Switch component.
+ */
 export interface SwitchProps
 	extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size'>,
 		StylingProps {
+	/** Label displayed next to the switch */
 	label?: ReactNode;
+	/** Description text below the label */
 	description?: ReactNode;
+	/** Error message to display */
 	error?: ReactNode;
+	/** Label shown when switch is on */
 	onLabel?: ReactNode;
+	/** Label shown when switch is off */
 	offLabel?: ReactNode;
 }
 
+/**
+ * Switch - A toggle switch component for boolean values.
+ *
+ * A styled checkbox rendered as a toggle switch with support for labels,
+ * descriptions, and multiple sizes. Uses native checkbox semantics.
+ *
+ * @example Basic switch
+ * ```tsx
+ * <Switch checked={isEnabled} onChange={e => setIsEnabled(e.target.checked)} />
+ * ```
+ *
+ * @example With label and description
+ * ```tsx
+ * <Switch
+ *   label="Enable notifications"
+ *   description="Receive updates about new features"
+ *   checked={notifications}
+ *   onChange={e => setNotifications(e.target.checked)}
+ * />
+ * ```
+ *
+ * @example Different sizes
+ * ```tsx
+ * <Switch size="sm" label="Small" />
+ * <Switch size="lg" label="Large" />
+ * ```
+ */
 const Switch: FC<SwitchProps> = ({
 	label,
 	description,

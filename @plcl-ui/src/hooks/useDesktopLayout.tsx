@@ -1,3 +1,4 @@
+import type { AppDefinition } from "@plcl/ui-types";
 import {
   IconFolder,
   IconGlobe,
@@ -14,7 +15,6 @@ import {
   useRef,
   useState,
 } from "react";
-import type { AppDefinition } from "../../../@plcl-ui-types/dist";
 
 export type LayoutMode = "grid" | "free";
 
@@ -136,7 +136,8 @@ export const DesktopLayoutProvider = ({
 
   return (
     <DesktopLayoutContext.Provider
-      value={{ layoutMode, setLayoutMode, items, moveIcon, resetLayout }}>
+      value={{ layoutMode, setLayoutMode, items, moveIcon, resetLayout }}
+    >
       {children}
     </DesktopLayoutContext.Provider>
   );
