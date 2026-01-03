@@ -1,0 +1,106 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Dev: All",
+      "type": "npm",
+      "script": "dev",
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      }
+    },
+    {
+      "label": "Dev: Types",
+      "type": "npm",
+      "script": "dev:types",
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Dev: Libraries",
+      "type": "npm",
+      "script": "dev:lib",
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Dev: Apps",
+      "type": "npm",
+      "script": "dev:apps",
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Dev: Docs",
+      "type": "npm",
+      "script": "dev:docs",
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Dev: Playground",
+      "type": "npm",
+      "script": "dev:playground",
+      "problemMatcher": [],
+      "isBackground": true
+    },
+    {
+      "label": "Build: All",
+      "type": "npm",
+      "script": "build",
+      "problemMatcher": [],
+      "group": "build"
+    },
+    {
+      "label": "Build: Types",
+      "type": "npm",
+      "script": "build:types",
+      "problemMatcher": []
+    },
+    {
+      "label": "Build: Libraries",
+      "type": "npm",
+      "script": "build:lib",
+      "problemMatcher": []
+    },
+    {
+      "label": "Lint: All",
+      "type": "npm",
+      "script": "lint",
+      "problemMatcher": []
+    },
+    {
+      "label": "Format: All",
+      "type": "npm",
+      "script": "format",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git: Stage, Commit & Push",
+      "type": "shell",
+      "command": "git add -A && git commit -m \"${input:commitMessage}\" && git push",
+      "problemMatcher": []
+    },
+    {
+      "label": "Git: Stage, Commit & Force Push",
+      "type": "shell",
+      "command": "git add -A && git commit -m \"${input:commitMessage}\" && git push --force",
+      "problemMatcher": []
+    }
+  ],
+  "inputs": [
+    {
+      "id": "commitMessage",
+      "type": "promptString",
+      "description": "Enter commit message",
+      "default": "Update"
+    }
+  ]
+}

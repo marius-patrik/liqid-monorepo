@@ -1,0 +1,41 @@
+{
+  "name": "@plcl/monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "@plcl-core-types",
+    "@plcl-core",
+    "@plcl-ui",
+    "@plcl-ui-types",
+    "docs",
+    "playground"
+  ],
+  "scripts": {
+    "dev": "npm run build:types && npm run build:lib && concurrently -n core-types,ui-types,core,ui,docs,playground -c gray,gray,blue,cyan,yellow,green \"cd @plcl-core-types && npm run dev\" \"cd @plcl-ui-types && npm run dev\" \"cd @plcl-core && npm run dev\" \"cd @plcl-ui && npm run dev\" \"cd docs && npm run dev\" \"cd playground && npm run dev\"",
+    "dev:types": "concurrently -n core-types,ui-types \"cd @plcl-core-types && npm run dev\" \"cd @plcl-ui-types && npm run dev\"",
+    "dev:lib": "concurrently -n core,ui \"cd @plcl-core && npm run dev\" \"cd @plcl-ui && npm run dev\"",
+    "dev:apps": "concurrently -n docs,playground \"cd docs && npm run dev\" \"cd playground && npm run dev\"",
+    "dev:docs": "cd docs && npm run dev",
+    "dev:playground": "cd playground && npm run dev",
+    "build": "npm run build:types && npm run build:lib && npm run build:docs",
+    "build:types": "cd @plcl-core-types && npm run build",
+    "build:lib": "cd @plcl-core && npm run build",
+    "build:docs": "cd docs && npm run build",
+    "install:all": "cd @plcl-core-types && npm install && cd ../@plcl-ui-types && npm install && cd ../@plcl-core && npm install && cd ../@plcl-ui && npm install && cd ../docs && npm install && cd ../playground && npm install",
+    "format": "npm run format:types && npm run format:lib && npm run format:docs",
+    "format:types": "cd @plcl-core-types && npm run format",
+    "format:lib": "cd @plcl-core && npm run format",
+    "format:docs": "cd docs && npm run format",
+    "lint": "npm run lint:types && npm run lint:lib && npm run lint:docs",
+    "lint:types": "cd @plcl-core-types && npm run lint",
+    "lint:lib": "cd @plcl-core && npm run lint",
+    "lint:docs": "cd docs && npm run lint",
+    "verify:build": "npm run build:types && npm run build:lib",
+    "verify:types": "cd @plcl-core-types && npm run build && cd ../@plcl-core && npm run build"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "wait-on": "^9.0.3"
+  }
+}
